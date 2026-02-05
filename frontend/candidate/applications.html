@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Applications - AI Resume Matcher</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="candidate-style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="gradient-text-link"><h2 class="gradient-text">AI Resume Matcher</h2></a>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="job-listing.html">Browse Jobs</a></li>
+        <li><a href="resume-upload.html">My Resume</a></li>
+        <li><a href="applications.html" class="active">My Applications</a></li>
+        <li><a href="#" id="logoutBtn">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Applications Content -->
+  <div class="page-container">
+    <div class="container">
+      <div class="page-header">
+        <h1>My Applications</h1>
+        <p>Track your job applications and view AI match scores</p>
+      </div>
+
+      <!-- Filter Section -->
+      <div class="filter-section" style="margin-bottom: 2rem;">
+        <div style="display: flex; gap: 1rem; align-items: center;">
+          <label for="statusFilter" style="color: rgba(255,255,255,0.9); font-weight: 500;">Filter by Status:</label>
+          <select id="statusFilter" style="padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white;">
+            <option value="ALL">All Applications</option>
+            <option value="PENDING">Pending</option>
+            <option value="REVIEWED">Reviewed</option>
+            <option value="SHORTLISTED">Shortlisted</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
+          <span id="applicationCount" style="color: rgba(255,255,255,0.7); margin-left: auto;"></span>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loadingState" style="display: none; text-align: center; padding: 3rem;">
+        <div class="spinner" style="margin: 0 auto; width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid #4a9eff; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        <p style="color: rgba(255,255,255,0.7); margin-top: 1rem;">Loading your applications...</p>
+      </div>
+
+      <!-- Applications Grid -->
+      <div id="applicationsGrid" class="applications-grid">
+        <!-- Applications will be populated here -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" style="display: none; text-align: center; padding: 3rem;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">📋</div>
+        <h3 style="color: rgba(255,255,255,0.9); margin-bottom: 0.5rem;">No Applications Yet</h3>
+        <p style="color: rgba(255,255,255,0.6); margin-bottom: 1.5rem;">Start applying to jobs to see them here!</p>
+        <a href="job-listing.html" class="btn btn-primary">Browse Jobs</a>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .applications-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .application-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .application-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(74, 158, 255, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1rem;
+    }
+
+    .app-title {
+      color: #fff;
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-PENDING { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+    .status-REVIEWED { background: rgba(33, 150, 243, 0.2); color: #2196F3; }
+    .status-SHORTLISTED { background: rgba(76, 175, 80, 0.2); color: #4CAF50; }
+    .status-REJECTED { background: rgba(244, 67, 54, 0.2); color: #f44336; }
+
+    .app-meta {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .score-section {
+      background: rgba(74, 158, 255, 0.1);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .score-label {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .score-value {
+      color: #4a9eff;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .score-breakdown {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .score-item {
+      text-align: center;
+    }
+
+    .score-item-label {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.75rem;
+    }
+
+    .score-item-value {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .app-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-small {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      flex: 1;
+    }
+  </style>
+
+  <script src="../config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    // Protect this page - require authentication
+    window.auth.requireAuth();
+  </script>
+  <script src="applications.js"></script>
+  <script src="candidate-main.js"></script>
+</body>
+</html>

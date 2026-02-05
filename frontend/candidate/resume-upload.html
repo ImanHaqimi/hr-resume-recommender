@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resume Upload - AI Resume Matcher</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="candidate-style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="gradient-text-link"><h2 class="gradient-text">AI Resume Matcher</h2></a>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="job-listing.html">Browse Jobs</a></li>
+        <li><a href="resume-upload.html" class="active">My Resume</a></li>
+        <li><a href="applications.html">My Applications</a></li>
+        <li><a href="../index.html">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Resume Upload Content -->
+  <div class="page-container">
+    <div class="container">
+      <div class="page-header">
+        <h1>My Resume</h1>
+        <p>Upload and manage your resume to get matched with the best opportunities</p>
+      </div>
+
+      <div class="resume-section">
+        <!-- Upload Section -->
+        <div class="upload-card">
+          <h3>Upload Your Resume</h3>
+          <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 1.5rem; text-align: center;">
+            Simply upload your resume and our AI will automatically extract all your information for job matching
+          </p>
+          <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📄</div>
+            <p class="upload-text">Drag and drop your resume here</p>
+            <p class="upload-subtext">or</p>
+            <label for="fileInput" class="btn btn-primary">Browse Files</label>
+            <input type="file" id="fileInput" accept=".pdf,.doc,.docx" style="display: none;">
+            <p class="upload-info">📄 PDF format preferred | Supported: PDF, DOC, DOCX (Max 5MB)</p>
+          </div>
+          <div class="uploaded-file" id="uploadedFile" style="display: none;">
+            <div class="file-info">
+              <span class="file-icon">📄</span>
+              <div class="file-details">
+                <span class="file-name" id="fileName"></span>
+                <span class="file-size" id="fileSize"></span>
+              </div>
+            </div>
+            <button class="btn-remove" id="removeFile">✕</button>
+          </div>
+          <div class="form-actions" style="margin-top: 2rem;">
+            <button type="button" class="btn btn-outline" onclick="window.location.href='job-listing.html'">Back to Jobs</button>
+            <button type="button" class="btn btn-primary" id="submitResume" disabled>Submit Resume</button>
+          </div>
+        </div>
+
+        <!-- AI Processing Info -->
+        <div class="resume-info-card" style="text-align: center;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🤖</div>
+          <h3>AI-Powered Resume Analysis</h3>
+          <p style="color: rgba(255, 255, 255, 0.8); line-height: 1.8; margin: 1.5rem 0;">
+            Our advanced AI technology will automatically analyze your resume and extract:
+          </p>
+          <div style="text-align: left; max-width: 500px; margin: 0 auto;">
+            <div style="margin: 1rem 0; padding: 0.75rem; background: rgba(74, 158, 255, 0.1); border-radius: 8px; border-left: 3px solid #4a9eff;">
+              <strong style="color: #4a9eff;">✓ Personal Information</strong>
+              <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">Name, contact details, location</p>
+            </div>
+            <div style="margin: 1rem 0; padding: 0.75rem; background: rgba(74, 158, 255, 0.1); border-radius: 8px; border-left: 3px solid #4a9eff;">
+              <strong style="color: #4a9eff;">✓ Education & Qualifications</strong>
+              <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">Degrees, certifications, universities</p>
+            </div>
+            <div style="margin: 1rem 0; padding: 0.75rem; background: rgba(74, 158, 255, 0.1); border-radius: 8px; border-left: 3px solid #4a9eff;">
+              <strong style="color: #4a9eff;">✓ Work Experience</strong>
+              <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">Job history, roles, responsibilities</p>
+            </div>
+            <div style="margin: 1rem 0; padding: 0.75rem; background: rgba(74, 158, 255, 0.1); border-radius: 8px; border-left: 3px solid #4a9eff;">
+              <strong style="color: #4a9eff;">✓ Skills & Expertise</strong>
+              <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">Technical skills, languages, tools</p>
+            </div>
+          </div>
+          <p style="color: rgba(255, 255, 255, 0.6); margin-top: 2rem; font-size: 0.9rem;">
+            💡 <strong>Tip:</strong> Make sure your resume is well-formatted for best results
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    // Protect this page - require authentication
+    window.auth.requireAuth();
+  </script>
+  <script src="resume-upload.js?v=2"></script>
+  <script src="candidate-main.js"></script>
+</body>
+</html>
+
