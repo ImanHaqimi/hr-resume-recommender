@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+
+# Build
+dist/
+build/
+
+# Temporary files
+*.tmp
+*.temp
+
+# User uploads (contains personal data)
+backend/uploads/
+
+# AI Module virtual environment
+ai-module/venv/
+ai-module/__pycache__/

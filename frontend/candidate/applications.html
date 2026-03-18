@@ -14,12 +14,16 @@
   <nav class="navbar">
     <div class="container navbar-container">
       <div class="nav-brand">
-        <a href="../index.html" class="gradient-text-link"><h2 class="gradient-text">AI Resume Matcher</h2></a>
+        <span class="nav-brand-link">
+          <img src="../images/logo.png" alt="AI Resume Matcher Logo" class="nav-logo">
+          <h2 class="gradient-text">AI Resume Matcher</h2>
+        </span>
       </div>
       <ul class="nav-menu">
         <li><a href="job-listing.html">Browse Jobs</a></li>
         <li><a href="resume-upload.html">My Resume</a></li>
         <li><a href="applications.html" class="active">My Applications</a></li>
+        <li><a href="profile.html">My Profile</a></li>
         <li><a href="#" id="logoutBtn">Logout</a></li>
       </ul>
     </div>
@@ -37,12 +41,11 @@
       <div class="filter-section" style="margin-bottom: 2rem;">
         <div style="display: flex; gap: 1rem; align-items: center;">
           <label for="statusFilter" style="color: rgba(255,255,255,0.9); font-weight: 500;">Filter by Status:</label>
-          <select id="statusFilter" style="padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white;">
-            <option value="ALL">All Applications</option>
-            <option value="PENDING">Pending</option>
-            <option value="REVIEWED">Reviewed</option>
-            <option value="SHORTLISTED">Shortlisted</option>
-            <option value="REJECTED">Rejected</option>
+          <select id="statusFilter" style="padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: #1a1f3a; color: white; outline: none; cursor: pointer;">
+            <option value="ALL" style="background: #1a1f3a; color: white;">All Applications</option>
+            <option value="PENDING" style="background: #1a1f3a; color: #facc15;">Pending</option>
+            <option value="SHORTLISTED" style="background: #1a1f3a; color: #4ade80;">Shortlisted</option>
+            <option value="REJECTED" style="background: #1a1f3a; color: #f87171;">Rejected</option>
           </select>
           <span id="applicationCount" style="color: rgba(255,255,255,0.7); margin-left: auto;"></span>
         </div>

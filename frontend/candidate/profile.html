@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - AI Resume Matcher</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="candidate-style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+
+    /* ── Hero ── */
+    .profile-hero {
+      padding: 2.5rem 0 1.8rem;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      margin-bottom: 2.5rem;
+    }
+    .profile-hero h1 {
+      font-size: 2rem; font-weight: 800; color: #fff;
+      letter-spacing: -0.02em; margin-bottom: 0.3rem;
+    }
+    .profile-hero h1 span {
+      background: linear-gradient(135deg, #4a9eff, #00d4b0);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .profile-hero p { font-size: 0.95rem; color: rgba(255,255,255,0.45); }
+
+    /* ── Grid ── */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 270px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    @media(max-width: 860px) { .profile-grid { grid-template-columns: 1fr; } }
+
+    /* ── Shared card ── */
+    .pcard {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 20px;
+      padding: 1.6rem;
+    }
+
+    /* ── Avatar panel ── */
+    .avatar-panel { text-align: center; }
+    .avatar-ring {
+      width: 100px; height: 100px; border-radius: 50%;
+      background: linear-gradient(135deg, #4a9eff, #8b5cf6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem; font-weight: 800; color: #fff;
+      margin: 0 auto 1.1rem;
+      box-shadow: 0 0 0 4px rgba(74,158,255,0.2), 0 8px 30px rgba(74,158,255,0.25);
+    }
+    .profile-name  { font-size: 1.1rem; font-weight: 700; color: #fff; }
+    .profile-email { font-size: 0.82rem; color: rgba(255,255,255,0.45); margin-top: 0.25rem; }
+    .candidate-badge {
+      display: inline-block; margin-top: 0.7rem;
+      background: rgba(74,158,255,0.12); border: 1px solid rgba(74,158,255,0.3);
+      color: #4a9eff; font-size: 0.72rem; font-weight: 700;
+      padding: 0.22rem 0.8rem; border-radius: 20px;
+    }
+
+    /* Resume status */
+    .resume-box {
+      margin-top: 1.2rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px; padding: 0.9rem 1rem; text-align: left;
+    }
+    .resume-box .rb-label { font-size: 0.7rem; color: rgba(255,255,255,0.38); margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .resume-box .rb-none  { font-size: 0.83rem; color: #f87171; }
+    .resume-box .rb-value { font-size: 0.83rem; color: #4ade80; word-break: break-all; font-weight: 500; }
+    .btn-upload-link {
+      display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+      width: 100%; margin-top: 0.8rem;
+      padding: 0.55rem; border-radius: 10px; font-size: 0.83rem; font-weight: 700;
+      background: rgba(74,158,255,0.08); border: 1.5px solid rgba(74,158,255,0.35);
+      color: #4a9eff; text-decoration: none; transition: background 0.2s;
+    }
+    .btn-upload-link:hover { background: rgba(74,158,255,0.15); }
+
+    /* ── Stats card ── */
+    .stats-card { margin-top: 1.1rem; }
+    .stats-card .pcard-label {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.7px; color: rgba(255,255,255,0.35);
+      margin-bottom: 1rem;
+    }
+    .stat-row {
+      display: flex; align-items: center; gap: 0.9rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-icon-box {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 1rem;
+    }
+    .stat-lbl { font-size: 0.83rem; color: rgba(255,255,255,0.5); flex: 1; }
+    .stat-val { font-size: 1.05rem; font-weight: 800; }
+
+    /* ── Form card ── */
+    .form-card { }
+
+    .section-accent {
+      display: flex; align-items: center; gap: 0.7rem;
+      margin-bottom: 1.2rem;
+    }
+    .section-accent .accent-bar {
+      width: 3px; height: 18px; border-radius: 3px;
+      background: linear-gradient(180deg, #4a9eff, #00d4b0);
+    }
+    .section-accent .accent-label {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.8px; color: rgba(255,255,255,0.4);
+    }
+    .section-accent .accent-note {
+      font-size: 0.75rem; color: rgba(255,255,255,0.25); font-weight: 400;
+      text-transform: none; letter-spacing: 0; margin-left: 0.3rem;
+    }
+
+    /* Form inputs */
+    .form-group { margin-bottom: 1.1rem; }
+    .form-group label {
+      display: block; font-size: 0.83rem; color: rgba(255,255,255,0.6);
+      font-weight: 500; margin-bottom: 0.4rem;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%; background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.14); color: #fff;
+      padding: 0.65rem 0.9rem; border-radius: 10px; font-size: 0.9rem;
+      font-family: inherit; outline: none; transition: border-color 0.2s; box-sizing: border-box;
+    }
+    .form-group input:disabled { opacity: 0.45; cursor: not-allowed; }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: rgba(74,158,255,0.55); background: rgba(255,255,255,0.08); }
+    .form-group select {
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 1rem center; background-size: 12px;
+      padding-right: 2.5rem; cursor: pointer;
+    }
+    .form-group select:focus {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a9eff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 1rem center; background-size: 12px;
+    }
+    .form-group select option { background: #1a1f3a; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media(max-width:600px){ .form-row { grid-template-columns: 1fr; } }
+    .form-hint { font-size: 0.75rem; color: rgba(255,255,255,0.3); margin-top: 0.3rem; }
+
+    /* Section divider */
+    .section-divider { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin: 1.5rem 0; }
+
+    /* Skills tags */
+    .skills-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+    .skill-tag {
+      background: rgba(74,158,255,0.1); border: 1px solid rgba(74,158,255,0.25);
+      color: #93c5fd; font-size: 0.77rem; padding: 0.22rem 0.65rem;
+      border-radius: 20px; display: flex; align-items: center; gap: 0.4rem;
+    }
+    .skill-tag button {
+      background: none; border: none; color: #93c5fd; cursor: pointer;
+      font-size: 0.9rem; line-height: 1; padding: 0; transition: color 0.15s;
+    }
+    .skill-tag button:hover { color: #f87171; }
+
+    /* Save button */
+    .btn-save {
+      width: 100%; padding: 0.75rem; border-radius: 11px;
+      font-size: 0.95rem; font-weight: 700; cursor: pointer;
+      background: linear-gradient(135deg, #4a9eff, #0066ff);
+      border: none; color: #fff; transition: opacity 0.2s, transform 0.15s;
+      margin-top: 0.5rem; font-family: inherit;
+    }
+    .btn-save:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+    .btn-save:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 9999;
+      padding: 0.85rem 1.5rem; border-radius: 12px; font-weight: 600; font-size: 0.9rem;
+      opacity: 0; transform: translateY(20px); transition: all 0.35s ease; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.success { background: rgba(74,222,128,0.15); border: 1px solid #4ade80; color: #4ade80; }
+    .toast.error   { background: rgba(248,113,113,0.15); border: 1px solid #f87171; color: #f87171; }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .skeleton { animation: pulse 1.5s infinite; background: rgba(255,255,255,0.08); border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <div class="nav-brand">
+        <span class="nav-brand-link">
+          <img src="../images/logo.png" alt="AI Resume Matcher Logo" class="nav-logo">
+          <h2 class="gradient-text">AI Resume Matcher</h2>
+        </span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="job-listing.html">Browse Jobs</a></li>
+        <li><a href="resume-upload.html">My Resume</a></li>
+        <li><a href="applications.html">My Applications</a></li>
+        <li><a href="profile.html" class="active">My Profile</a></li>
+        <li><a href="../index.html" id="logoutBtn">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="page-container">
+    <div class="container">
+
+      <!-- Hero -->
+      <div class="profile-hero">
+        <h1>My <span>Profile</span></h1>
+        <p>Manage your personal information, career details and skills.</p>
+      </div>
+
+      <div class="profile-grid">
+
+        <!-- ── Left column ── -->
+        <div style="display:flex;flex-direction:column;gap:1.1rem;">
+
+          <!-- Avatar card -->
+          <div class="pcard avatar-panel">
+            <div class="avatar-ring" id="avatarInitials">—</div>
+            <div class="profile-name"  id="profileName">Loading...</div>
+            <div class="profile-email" id="profileEmail"></div>
+            <div class="candidate-badge">🎓 Candidate</div>
+
+            <div class="resume-box">
+              <div class="rb-label">📄 Resume</div>
+              <div id="resumeStatus"><span class="rb-none">No resume uploaded</span></div>
+            </div>
+            <a href="resume-upload.html" class="btn-upload-link">📤 Upload / Replace Resume</a>
+          </div>
+
+          <!-- Stats card -->
+          <div class="pcard stats-card">
+            <div class="pcard-label">Quick Stats</div>
+
+            <div class="stat-row">
+              <div class="stat-icon-box" style="background:rgba(74,158,255,0.12);">📋</div>
+              <span class="stat-lbl">Applications</span>
+              <span class="stat-val" style="color:#4a9eff;" id="statApplications">—</span>
+            </div>
+            <div class="stat-row">
+              <div class="stat-icon-box" style="background:rgba(74,222,128,0.12);">✅</div>
+              <span class="stat-lbl">Shortlisted</span>
+              <span class="stat-val" style="color:#4ade80;" id="statShortlisted">—</span>
+            </div>
+            <div class="stat-row">
+              <div class="stat-icon-box" style="background:rgba(167,139,250,0.12);">⚡</div>
+              <span class="stat-lbl">Skills Listed</span>
+              <span class="stat-val" style="color:#a78bfa;" id="statSkills">—</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── Right column — Edit form ── -->
+        <div class="pcard form-card">
+
+          <!-- Account info (read-only) -->
+          <div class="section-accent">
+            <div class="accent-bar"></div>
+            <span class="accent-label">Account Info</span>
+            <span class="accent-note">(read-only)</span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" id="fieldName" disabled>
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="fieldEmail" disabled>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="text" id="fieldPhone" disabled>
+            <div class="form-hint">Contact your admin to update name, email, or phone.</div>
+          </div>
+
+          <hr class="section-divider">
+
+          <!-- Career info (editable) -->
+          <div class="section-accent">
+            <div class="accent-bar" style="background:linear-gradient(180deg,#00d4b0,#8b5cf6);"></div>
+            <span class="accent-label">Career Information</span>
+            <span class="accent-note">(editable)</span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Education Level</label>
+              <select id="fieldEducation">
+                <option value="">Select Education Level</option>
+                <option value="high-school">High School / SPM</option>
+                <option value="diploma">Diploma</option>
+                <option value="bachelor">Bachelor's Degree</option>
+                <option value="master">Master's Degree</option>
+                <option value="phd">PhD</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Years of Experience</label>
+              <input type="number" id="fieldExperience" min="0" max="40" placeholder="e.g. 3" style="-moz-appearance:textfield;">
+              <div class="form-hint">Total years of work experience</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>LinkedIn URL</label>
+            <input type="url" id="fieldLinkedin" placeholder="https://linkedin.com/in/yourname">
+          </div>
+
+          <!-- Skills -->
+          <div class="form-group">
+            <label>Skills</label>
+            <div class="skills-input-wrapper">
+              <input type="text" id="skillInput"
+                placeholder="Type a skill and press Enter or comma..."
+                onkeydown="handleSkillKey(event)">
+            </div>
+            <div class="form-hint">Press Enter or comma to add each skill</div>
+            <div class="skills-tags" id="skillsTags"></div>
+          </div>
+
+          <button class="btn-save" id="saveBtn" onclick="saveProfile()">💾 Save Changes</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="../config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    window.auth.requireAuth();
+    if (!window.auth.hasRole('CANDIDATE')) window.location.href = '../index.html';
+    document.getElementById('logoutBtn').addEventListener('click', e => {
+      e.preventDefault(); window.auth.logout(); window.location.href = '../index.html';
+    });
+  </script>
+  <script src="profile.js"></script>
+</body>
+</html>

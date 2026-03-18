@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Candidate Ranking - AI Resume Matcher</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="hr-style.css">
+  <link rel="stylesheet" href="candidate-ranking-styles.css?v=2">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <div class="nav-brand">
+        <span class="nav-brand-link">
+          <img src="../images/logo.png" alt="AI Resume Matcher Logo" class="nav-logo">
+          <h2 class="gradient-text">AI Resume Matcher</h2>
+        </span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="job-posting.html">Post Job</a></li>
+        <li><a href="manage-jobs.html">My Jobs</a></li>
+        <li><a href="candidate-ranking.html" class="active">Candidates</a></li>
+        <li><a href="../index.html">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Candidate Ranking Content -->
+  <div class="page-container">
+    <div class="container">
+      <div class="page-header">
+        <div class="header-content">
+          <div>
+            <h1>Candidate Rankings</h1>
+            <p>AI-ranked candidates based on education level and skills matching</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Filter Section -->
+      <div class="filter-section">
+        <div class="filter-group">
+          <label for="jobFilter">Filter by Job:</label>
+          <select id="jobFilter" name="jobFilter">
+            <option value="">Select a job to view candidates</option>
+            <!-- Job options dynamically loaded from database -->
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="sortFilter">Sort by:</label>
+          <select id="sortFilter" name="sortFilter">
+            <option value="match">Match Score</option>
+            <option value="date">Application Date</option>
+            <option value="name">Name</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="qualifiedFilter">
+            <input type="checkbox" id="qualifiedFilter" name="qualifiedFilter" checked>
+            Show Qualified Only
+          </label>
+          <span id="filterInfo" class="filter-info"></span>
+        </div>
+      </div>
+
+      <!-- Candidate Cards -->
+      <div class="candidates-grid" id="candidatesGrid">
+        <!-- Rich empty state shown before a job is selected -->
+        <div class="loading-state" id="emptyState">
+          <div class="empty-state-illustration">
+            <div class="empty-icon-ring">
+              <div class="empty-icon-pulse"></div>
+              <span class="empty-icon">🔍</span>
+            </div>
+            <h2 class="empty-title">Select a Job to See Candidates</h2>
+            <p class="empty-subtitle">Use the <strong>Filter by Job</strong> dropdown above to view AI-ranked candidates for any of your active job postings.</p>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script src="../config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    // Protect this page - require HR authentication
+    window.auth.requireAuth();
+    if (!window.auth.hasRole('HR')) {
+      alert('Access denied. This page is for HR users only.');
+      window.location.href = '../index.html';
+    }
+  </script>
+  <script src="hr-main.js"></script>
+  <script src="candidate-ranking.js?v=3"></script>
+</body>
+</html>
+

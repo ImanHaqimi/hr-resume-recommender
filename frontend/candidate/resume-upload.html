@@ -3,96 +3,303 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Resume Upload - AI Resume Matcher</title>
+  <title>My Resume - AI Resume Matcher</title>
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="candidate-style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+
+    /* ── Page hero ── */
+    .resume-hero {
+      padding: 2.5rem 0 1.8rem;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      margin-bottom: 2.5rem;
+    }
+    .resume-hero h1 {
+      font-size: 2rem; font-weight: 800; color: #fff;
+      letter-spacing: -0.02em; margin-bottom: 0.3rem;
+    }
+    .resume-hero h1 span {
+      background: linear-gradient(135deg, #4a9eff, #00d4b0);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .resume-hero p { font-size: 0.95rem; color: rgba(255,255,255,0.45); }
+
+    /* ── Two-column layout ── */
+    .resume-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    @media (max-width: 860px) { .resume-layout { grid-template-columns: 1fr; } }
+
+    /* ── Upload card ── */
+    .upload-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 20px;
+      padding: 2rem;
+    }
+    .upload-card-title {
+      font-size: 1.05rem; font-weight: 700; color: #fff;
+      margin-bottom: 0.3rem;
+    }
+    .upload-card-sub {
+      font-size: 0.85rem; color: rgba(255,255,255,0.4);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Drop zone */
+    .drop-zone {
+      border: 2px dashed rgba(74,158,255,0.35);
+      border-radius: 16px;
+      padding: 3rem 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.25s, background 0.25s;
+      position: relative;
+    }
+    .drop-zone:hover, .drop-zone.drag-over {
+      border-color: #4a9eff;
+      background: rgba(74,158,255,0.05);
+    }
+    .drop-zone input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%;
+    }
+    .drop-icon {
+      font-size: 3rem; margin-bottom: 0.9rem;
+      display: block;
+      transition: transform 0.3s;
+    }
+    .drop-zone:hover .drop-icon { transform: translateY(-4px); }
+    .drop-title {
+      font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 0.4rem;
+    }
+    .drop-sub {
+      font-size: 0.82rem; color: rgba(255,255,255,0.4); margin-bottom: 1.1rem;
+    }
+    .drop-btn {
+      display: inline-block;
+      padding: 0.5rem 1.3rem; border-radius: 9px; font-size: 0.85rem; font-weight: 700;
+      background: linear-gradient(135deg, #4a9eff, #0066ff);
+      color: #fff; pointer-events: none;
+    }
+    .drop-formats {
+      font-size: 0.75rem; color: rgba(255,255,255,0.28);
+      margin-top: 1rem;
+    }
+
+    /* File selected state */
+    .file-selected {
+      display: none;
+      background: rgba(74,158,255,0.07);
+      border: 1px solid rgba(74,158,255,0.25);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      margin-top: 1.25rem;
+      align-items: center; gap: 1rem;
+    }
+    .file-selected.show { display: flex; }
+    .file-icon-box {
+      width: 44px; height: 44px; border-radius: 10px; flex-shrink:0;
+      background: rgba(74,158,255,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+    }
+    .file-meta { flex: 1; }
+    .file-name-text { font-size: 0.9rem; font-weight: 600; color: #fff; }
+    .file-size-text { font-size: 0.77rem; color: rgba(255,255,255,0.4); margin-top: 0.1rem; }
+    .file-remove {
+      background: none; border: none; color: rgba(255,255,255,0.35);
+      font-size: 1.2rem; cursor: pointer; line-height:1; padding: 0;
+      transition: color 0.2s;
+    }
+    .file-remove:hover { color: #f87171; }
+
+    /* Action buttons */
+    .upload-actions {
+      display: flex; gap: 0.75rem; margin-top: 1.5rem;
+    }
+    .btn-back {
+      flex: 1; padding: 0.65rem; border-radius: 10px; font-size: 0.9rem; font-weight: 600;
+      border: 1.5px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.75); cursor: pointer; font-family: inherit;
+      transition: background 0.2s;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.09); }
+    .btn-submit {
+      flex: 2; padding: 0.65rem; border-radius: 10px; font-size: 0.9rem; font-weight: 700;
+      border: none; background: linear-gradient(135deg, #4a9eff, #0066ff);
+      color: #fff; cursor: pointer; font-family: inherit;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-submit:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+    .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    /* ── AI Info panel ── */
+    .ai-panel {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 20px;
+      padding: 1.6rem;
+    }
+    .ai-panel-header {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin-bottom: 1.2rem;
+      padding-bottom: 1.1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .ai-panel-icon {
+      width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+      background: linear-gradient(135deg, #4a9eff22, #8b5cf622);
+      border: 1px solid rgba(74,158,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+    }
+    .ai-panel h3 { font-size: 0.95rem; font-weight: 700; color: #fff; }
+    .ai-panel h3 span { font-size: 0.75rem; font-weight: 500; color: rgba(255,255,255,0.4); display: block; margin-top: 0.1rem; }
+
+    .ai-extract-list { display: flex; flex-direction: column; gap: 0.7rem; }
+    .ai-extract-item {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      padding: 0.8rem; border-radius: 11px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .extract-icon {
+      width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+    .extract-label { font-size: 0.85rem; font-weight: 600; color: #fff; margin-bottom: 0.12rem; }
+    .extract-sub   { font-size: 0.75rem; color: rgba(255,255,255,0.38); }
+
+    .ai-tip {
+      margin-top: 1.1rem;
+      padding: 0.8rem 1rem;
+      background: rgba(74,158,255,0.07);
+      border: 1px solid rgba(74,158,255,0.18);
+      border-radius: 10px;
+      font-size: 0.8rem; color: rgba(255,255,255,0.55); line-height: 1.5;
+    }
+    .ai-tip strong { color: #4a9eff; }
+  </style>
 </head>
 <body>
   <!-- Navbar -->
   <nav class="navbar">
     <div class="container navbar-container">
       <div class="nav-brand">
-        <a href="../index.html" class="gradient-text-link"><h2 class="gradient-text">AI Resume Matcher</h2></a>
+        <span class="nav-brand-link">
+          <img src="../images/logo.png" alt="AI Resume Matcher Logo" class="nav-logo">
+          <h2 class="gradient-text">AI Resume Matcher</h2>
+        </span>
       </div>
       <ul class="nav-menu">
         <li><a href="job-listing.html">Browse Jobs</a></li>
         <li><a href="resume-upload.html" class="active">My Resume</a></li>
         <li><a href="applications.html">My Applications</a></li>
-        <li><a href="../index.html">Logout</a></li>
+        <li><a href="profile.html">My Profile</a></li>
+        <li><a href="../index.html" id="logoutBtn">Logout</a></li>
       </ul>
     </div>
   </nav>
 
-  <!-- Resume Upload Content -->
   <div class="page-container">
     <div class="container">
-      <div class="page-header">
-        <h1>My Resume</h1>
-        <p>Upload and manage your resume to get matched with the best opportunities</p>
+
+      <!-- Hero -->
+      <div class="resume-hero">
+        <h1>My <span>Resume</span></h1>
+        <p>Upload your resume once and get AI-matched to the best job opportunities automatically.</p>
       </div>
 
-      <div class="resume-section">
-        <!-- Upload Section -->
+      <!-- Two-column layout -->
+      <div class="resume-layout">
+
+        <!-- Upload card (left) -->
         <div class="upload-card">
-          <h3>Upload Your Resume</h3>
-          <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 1.5rem; text-align: center;">
-            Simply upload your resume and our AI will automatically extract all your information for job matching
-          </p>
-          <div class="upload-area" id="uploadArea">
-            <div class="upload-icon">📄</div>
-            <p class="upload-text">Drag and drop your resume here</p>
-            <p class="upload-subtext">or</p>
-            <label for="fileInput" class="btn btn-primary">Browse Files</label>
-            <input type="file" id="fileInput" accept=".pdf,.doc,.docx" style="display: none;">
-            <p class="upload-info">📄 PDF format preferred | Supported: PDF, DOC, DOCX (Max 5MB)</p>
+          <div class="upload-card-title">Upload Your Resume</div>
+          <div class="upload-card-sub">Our AI will extract your skills, education and experience automatically.</div>
+
+          <!-- Drop zone -->
+          <div class="drop-zone" id="uploadArea">
+            <input type="file" id="fileInput" accept=".pdf,.doc,.docx">
+            <span class="drop-icon">📄</span>
+            <div class="drop-title">Drag & drop your resume here</div>
+            <div class="drop-sub">or click to browse your files</div>
+            <span class="drop-btn">Browse Files</span>
+            <div class="drop-formats">PDF · DOC · DOCX &nbsp;·&nbsp; Max 5 MB</div>
           </div>
-          <div class="uploaded-file" id="uploadedFile" style="display: none;">
-            <div class="file-info">
-              <span class="file-icon">📄</span>
-              <div class="file-details">
-                <span class="file-name" id="fileName"></span>
-                <span class="file-size" id="fileSize"></span>
-              </div>
+
+          <!-- Selected file -->
+          <div class="file-selected" id="uploadedFile">
+            <div class="file-icon-box">📄</div>
+            <div class="file-meta">
+              <div class="file-name-text" id="fileName">resume.pdf</div>
+              <div class="file-size-text" id="fileSize">2.1 MB</div>
             </div>
-            <button class="btn-remove" id="removeFile">✕</button>
+            <button class="file-remove" id="removeFile" title="Remove file">✕</button>
           </div>
-          <div class="form-actions" style="margin-top: 2rem;">
-            <button type="button" class="btn btn-outline" onclick="window.location.href='job-listing.html'">Back to Jobs</button>
-            <button type="button" class="btn btn-primary" id="submitResume" disabled>Submit Resume</button>
+
+          <!-- Actions -->
+          <div class="upload-actions">
+            <button class="btn-back" onclick="window.location.href='job-listing.html'">← Back to Jobs</button>
+            <button class="btn-submit" id="submitResume" disabled>🚀 Submit Resume</button>
           </div>
         </div>
 
-        <!-- AI Processing Info -->
-        <div class="resume-info-card" style="text-align: center;">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">🤖</div>
-          <h3>AI-Powered Resume Analysis</h3>
-          <p style="color: rgba(255, 255, 255, 0.8); line-height: 1.8; margin: 1.5rem 0;">
-            Our advanced AI technology will automatically analyze your resume and extract:
-          </p>
-          <div style="text-align: left; max-width: 500px; margin: 0 auto;">
-            <div style="margin: 1rem 0; padding: 0.75rem; background: rgba(74, 158, 255, 0.1); border-radius: 8px; border-left: 3px solid #4a9eff;">
-              <strong style="color: #4a9eff;">✓ Personal Information</strong>
-              <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">Name, contact details, location</p>
+        <!-- AI info panel (right) -->
+        <div class="ai-panel">
+          <div class="ai-panel-header">
+            <div class="ai-panel-icon">🤖</div>
+            <h3>
+              AI Resume Analysis
+              <span>What we extract automatically</span>
+            </h3>
+          </div>
+
+          <div class="ai-extract-list">
+            <div class="ai-extract-item">
+              <div class="extract-icon" style="background:rgba(74,158,255,0.12);">👤</div>
+              <div>
+                <div class="extract-label">Personal Information</div>
+                <div class="extract-sub">Name, email, phone, location</div>
+              </div>
             </div>
-            <div style="margin: 1rem 0; padding: 0.75rem; background: rgba(74, 158, 255, 0.1); border-radius: 8px; border-left: 3px solid #4a9eff;">
-              <strong style="color: #4a9eff;">✓ Education & Qualifications</strong>
-              <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">Degrees, certifications, universities</p>
+            <div class="ai-extract-item">
+              <div class="extract-icon" style="background:rgba(0,212,176,0.12);">🎓</div>
+              <div>
+                <div class="extract-label">Education & Qualifications</div>
+                <div class="extract-sub">Degrees, universities, certifications</div>
+              </div>
             </div>
-            <div style="margin: 1rem 0; padding: 0.75rem; background: rgba(74, 158, 255, 0.1); border-radius: 8px; border-left: 3px solid #4a9eff;">
-              <strong style="color: #4a9eff;">✓ Work Experience</strong>
-              <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">Job history, roles, responsibilities</p>
+            <div class="ai-extract-item">
+              <div class="extract-icon" style="background:rgba(139,92,246,0.12);">💼</div>
+              <div>
+                <div class="extract-label">Work Experience</div>
+                <div class="extract-sub">Job history, roles & responsibilities</div>
+              </div>
             </div>
-            <div style="margin: 1rem 0; padding: 0.75rem; background: rgba(74, 158, 255, 0.1); border-radius: 8px; border-left: 3px solid #4a9eff;">
-              <strong style="color: #4a9eff;">✓ Skills & Expertise</strong>
-              <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">Technical skills, languages, tools</p>
+            <div class="ai-extract-item">
+              <div class="extract-icon" style="background:rgba(245,158,11,0.12);">⚡</div>
+              <div>
+                <div class="extract-label">Skills & Expertise</div>
+                <div class="extract-sub">Technical skills, tools, languages</div>
+              </div>
             </div>
           </div>
-          <p style="color: rgba(255, 255, 255, 0.6); margin-top: 2rem; font-size: 0.9rem;">
-            💡 <strong>Tip:</strong> Make sure your resume is well-formatted for best results
-          </p>
+
+          <div class="ai-tip">
+            💡 <strong>Tip:</strong> Use a clean, well-formatted PDF for the most accurate AI extraction and highest match scores.
+          </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -100,11 +307,18 @@
   <script src="../config.js"></script>
   <script src="../js/auth.js"></script>
   <script>
-    // Protect this page - require authentication
     window.auth.requireAuth();
+    document.getElementById('logoutBtn')?.addEventListener('click', e => {
+      e.preventDefault(); window.auth.logout();
+    });
+
+    // Drag-over highlight
+    const zone = document.getElementById('uploadArea');
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', () => zone.classList.remove('drag-over'));
   </script>
   <script src="resume-upload.js?v=2"></script>
   <script src="candidate-main.js"></script>
 </body>
 </html>
-

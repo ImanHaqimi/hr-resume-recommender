@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HR Dashboard - AI Resume Matcher</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="hr-style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* ══════════════════════════════════════════
+       EXECUTIVE SUMMARY STYLE DASHBOARD
+    ══════════════════════════════════════════ */
+
+    body { background: #0a1628; }
+
+    .dashboard-container {
+      padding: 2rem 0 5rem;
+      min-height: calc(100vh - 70px);
+    }
+
+    /* ── Page Title ── */
+    .exec-title {
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 1.6rem;
+    }
+
+    /* ── Top 4-column grid ── */
+    .exec-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    @media (max-width: 900px) { .exec-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 500px) { .exec-grid { grid-template-columns: 1fr; } }
+
+    /* Colored pill header */
+    .exec-col-header {
+      border-radius: 12px;
+      padding: 0.9rem 1rem;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.3px;
+      margin-bottom: 0;
+    }
+
+    .hdr-teal1  { background: #00897b; }
+    .hdr-teal2  { background: #00acc1; }
+    .hdr-amber  { background: #f9a825; color: #1a1a1a; }
+    .hdr-coral  { background: #f4511e; }
+
+    /* Stat card below header */
+    .exec-stat-card {
+      background: #152040;
+      border-radius: 14px;
+      padding: 1.3rem 1.2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .exec-stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .stat-top-label {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      margin-bottom: 0.1rem;
+    }
+
+    .stat-big-number {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+    }
+
+    /* Silhouette / icon illustration */
+    .stat-illustration {
+      width: 100%;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.6rem;
+      opacity: 0.85;
+      margin: 0.2rem 0;
+      filter: brightness(0) invert(1);
+    }
+
+    /* Bottom sub-stats row */
+    .stat-sub-row {
+      display: flex;
+      width: 100%;
+      justify-content: space-around;
+      padding-top: 0.6rem;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      margin-top: 0.2rem;
+    }
+
+    .stat-sub-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.15rem;
+    }
+
+    .stat-sub-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .stat-sub-label {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.45);
+      text-align: center;
+    }
+
+    /* ── Bottom charts row ── */
+    .exec-charts-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 760px) { .exec-charts-row { grid-template-columns: 1fr; } }
+
+    .exec-chart-card {
+      background: #152040;
+      border-radius: 14px;
+      padding: 1.4rem 1.5rem;
+    }
+
+    .exec-chart-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.85);
+      margin: 0 0 1.2rem 0;
+    }
+
+    .chart-wrap {
+      height: 200px;
+      position: relative;
+    }
+
+    /* ── Status bar chart ── */
+    .weekly-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 1.4rem;
+      padding-top: 0.3rem;
+    }
+
+    .wbar-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .wbar-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .wbar-label {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.65);
+      font-weight: 600;
+    }
+
+    .wbar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .wbar-count {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .wbar-pct {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.35);
+    }
+
+    .wbar-track {
+      width: 100%;
+      height: 14px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .wbar-fill {
+      height: 100%;
+      border-radius: 8px;
+      transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+      min-width: 0;
+    }
+
+    .wbar-teal  { background: linear-gradient(90deg, #1565c0, #4a9eff); }
+    .wbar-coral { background: linear-gradient(90deg, #c62828, #ef5350); }
+
+    .wbar-total-line {
+      margin-top: 0.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .wbar-total-label {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.35);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .wbar-total-val {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    /* Donut chart */
+    .chart-container-donut {
+      height: 190px;
+      position: relative;
+    }
+
+    /* Center overlay text inside the donut hole */
+    .donut-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      top: -20px; /* offset above the legend */
+    }
+
+    .donut-center-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .donut-center-label {
+      font-size: 0.68rem;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-top: 3px;
+    }
+
+    /* Custom legend pills */
+    .donut-legend {
+      display: flex;
+      justify-content: center;
+      gap: 0.8rem;
+      margin-top: 1rem;
+    }
+
+    .legend-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.85rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: 1px solid;
+    }
+
+    .legend-pill .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .legend-blue {
+      background: rgba(74,158,255,0.08);
+      border-color: rgba(74,158,255,0.3);
+      color: #4a9eff;
+    }
+    .legend-blue .dot { background: #4a9eff; }
+
+    .legend-red {
+      background: rgba(239,68,68,0.08);
+      border-color: rgba(239,68,68,0.3);
+      color: #ef4444;
+    }
+    .legend-red .dot { background: #ef4444; }
+
+    /* ── Recent table ── */
+    .exec-table-card {
+      background: #152040;
+      border-radius: 14px;
+      padding: 1.4rem 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .exec-table-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .exec-table-header h2 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.85);
+      margin: 0;
+    }
+
+    .table-count {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.05);
+      padding: 0.22rem 0.7rem;
+      border-radius: 20px;
+    }
+
+    .table-wrapper { overflow-x: auto; }
+
+    .applications-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.87rem;
+    }
+
+    .applications-table th {
+      text-align: left;
+      padding: 0.65rem 1rem;
+      color: rgba(255,255,255,0.35);
+      font-weight: 600;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .applications-table td {
+      padding: 0.85rem 1rem;
+      color: rgba(255,255,255,0.75);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .applications-table tr:last-child td { border-bottom: none; }
+    .applications-table tr:hover td { background: rgba(255,255,255,0.03); }
+    .text-center { text-align: center; }
+
+    .match-score {
+      display: inline-block;
+      padding: 0.22rem 0.6rem;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    .match-score.excellent { background: rgba(0,230,170,0.12); color: #00e6aa; }
+    .match-score.good      { background: rgba(74,158,255,0.12); color: #4a9eff; }
+    .match-score.fair      { background: rgba(245,158,11,0.12); color: #f59e0b; }
+    .match-score.poor      { background: rgba(239,68,68,0.12);  color: #ef4444; }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.22rem 0.65rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .status-badge.shortlisted { background: rgba(0,230,170,0.12); color: #00e6aa; border: 1px solid rgba(0,230,170,0.25); }
+    .status-badge.reviewed    { background: rgba(6,182,212,0.12);  color: #06b6d4; border: 1px solid rgba(6,182,212,0.25); }
+    .status-badge.pending     { background: rgba(245,158,11,0.12); color: #f59e0b; border: 1px solid rgba(245,158,11,0.25); }
+    .status-badge.rejected    { background: rgba(239,68,68,0.12);  color: #ef4444; border: 1px solid rgba(239,68,68,0.25); }
+
+    .table-empty {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: rgba(255,255,255,0.3);
+      font-size: 0.88rem;
+    }
+
+    /* ── Quick Action Cards ── */
+    .qa-card {
+      background: #152040;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 1.2rem 1.4rem;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
+    }
+    .qa-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      border-color: rgba(74,158,255,0.3);
+    }
+    .qa-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .qa-text { flex: 1; }
+    .qa-title {
+      font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 0.15rem;
+    }
+    .qa-sub { font-size: 0.75rem; color: rgba(255,255,255,0.38); }
+    .qa-arrow {
+      color: rgba(255,255,255,0.2); font-size: 1.1rem;
+      transition: transform 0.2s, color 0.2s;
+    }
+    .qa-card:hover .qa-arrow {
+      transform: translateX(3px);
+      color: rgba(74,158,255,0.7);
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <div class="nav-brand">
+        <span class="nav-brand-link">
+          <img src="../images/logo.png" alt="AI Resume Matcher Logo" class="nav-logo">
+          <h2 class="gradient-text">AI Resume Matcher</h2>
+        </span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="dashboard.html" class="active">Dashboard</a></li>
+        <li><a href="job-posting.html">Post Job</a></li>
+        <li><a href="manage-jobs.html">My Jobs</a></li>
+        <li><a href="candidate-ranking.html">Candidates</a></li>
+        <li><a href="../index.html" id="logoutBtn">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Dashboard Content -->
+  <div class="dashboard-container">
+    <div class="container">
+
+      <h1 class="exec-title">HR Dashboard</h1>
+
+      <!-- ── Row 1: 4 colored headers ── -->
+      <div class="exec-grid" id="headerRow">
+        <div class="exec-col-header hdr-teal1">Applications</div>
+        <div class="exec-col-header hdr-teal2">Active Jobs</div>
+        <div class="exec-col-header hdr-amber">This Week</div>
+        <div class="exec-col-header hdr-coral">Status</div>
+      </div>
+
+      <!-- ── Row 2: 4 stat cards ── -->
+      <div class="exec-grid">
+
+        <!-- Card 1: Applications -->
+        <div class="exec-stat-card">
+          <span class="stat-top-label">Total Applications</span>
+          <span class="stat-big-number" id="totalApplications">—</span>
+          <div class="stat-illustration">👥</div>
+          <div class="stat-sub-row">
+            <div class="stat-sub-item">
+              <span class="stat-sub-value" id="pendingCount">—</span>
+              <span class="stat-sub-label">Pending</span>
+            </div>
+            <div class="stat-sub-item">
+              <span class="stat-sub-value" id="shortlistedCount">—</span>
+              <span class="stat-sub-label">Shortlisted</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Active Jobs -->
+        <div class="exec-stat-card">
+          <span class="stat-top-label">Active Job Postings</span>
+          <span class="stat-big-number" id="activeJobs">—</span>
+          <div class="stat-illustration">💼</div>
+          <div class="stat-sub-row">
+            <div class="stat-sub-item">
+              <span class="stat-sub-value" id="jobsTrendVal">—</span>
+              <span class="stat-sub-label">This Week</span>
+            </div>
+            <div class="stat-sub-item">
+              <span class="stat-sub-value" id="weeklyJobs">—</span>
+              <span class="stat-sub-label">Jobs Posted</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: This Week -->
+        <div class="exec-stat-card">
+          <span class="stat-top-label">Applications This Week</span>
+          <span class="stat-big-number" id="weeklyApplications">—</span>
+          <div class="stat-illustration">📋</div>
+          <div class="stat-sub-row">
+            <div class="stat-sub-item">
+              <span class="stat-sub-value" id="weeklyHighMatches">—</span>
+              <span class="stat-sub-label">High Match ≥80%</span>
+            </div>
+            <div class="stat-sub-item">
+              <span class="stat-sub-value" id="weeklyInterviews">—</span>
+              <span class="stat-sub-label">Shortlisted</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4: Status -->
+        <div class="exec-stat-card">
+          <span class="stat-top-label">Reviewed</span>
+          <span class="stat-big-number" id="reviewedCount">—</span>
+          <div class="stat-illustration">✅</div>
+          <div class="stat-sub-row">
+            <div class="stat-sub-item">
+              <span class="stat-sub-value" id="shortlistedCount2">—</span>
+              <span class="stat-sub-label">Shortlisted</span>
+            </div>
+            <div class="stat-sub-item">
+              <span class="stat-sub-value" id="rejectedCount">—</span>
+              <span class="stat-sub-label">Rejected</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── Bottom: Horizontal bars + Donut ── -->
+      <div class="exec-charts-row">
+
+        <!-- Weekly horizontal bar chart -->
+        <div class="exec-chart-card">
+          <div class="exec-chart-title">📊 Applications by Status</div>
+          <div class="weekly-bars" id="statusBarsContainer">
+            <div class="wbar-row">
+              <div class="wbar-meta">
+                <span class="wbar-label">✅ Shortlisted</span>
+                <div class="wbar-right">
+                  <span class="wbar-count" id="barShortlistedCount">0</span>
+                  <span class="wbar-pct" id="barShortlistedPct">0%</span>
+                </div>
+              </div>
+              <div class="wbar-track"><div class="wbar-fill wbar-teal" id="barShortlisted" style="width:0%"></div></div>
+            </div>
+            <div class="wbar-row">
+              <div class="wbar-meta">
+                <span class="wbar-label">❌ Rejected</span>
+                <div class="wbar-right">
+                  <span class="wbar-count" id="barRejectedCount">0</span>
+                  <span class="wbar-pct" id="barRejectedPct">0%</span>
+                </div>
+              </div>
+              <div class="wbar-track"><div class="wbar-fill wbar-coral" id="barRejected" style="width:0%"></div></div>
+            </div>
+            <div class="wbar-total-line">
+              <span class="wbar-total-label">Total Decided</span>
+              <span class="wbar-total-val" id="barTotal">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Donut chart -->
+        <div class="exec-chart-card">
+          <div class="exec-chart-title">🎯 Candidate Status Breakdown</div>
+          <div class="chart-container-donut">
+            <canvas id="statusDonutChart"></canvas>
+            <div class="donut-center">
+              <span class="donut-center-value" id="donutTotal">—</span>
+              <span class="donut-center-label">Total</span>
+            </div>
+          </div>
+          <div class="donut-legend">
+            <div class="legend-pill legend-blue"><span class="dot"></span>Shortlisted (<span id="legendShortlisted">0</span>)</div>
+            <div class="legend-pill legend-red"><span class="dot"></span>Rejected (<span id="legendRejected">0</span>)</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── Recent Applications Table ── -->
+      <div class="exec-table-card">
+        <div class="exec-table-header">
+          <h2>🕐 Recent Applications</h2>
+          <span class="table-count" id="tableCount">Loading…</span>
+        </div>
+        <div class="table-wrapper">
+          <table class="applications-table">
+            <thead>
+              <tr>
+                <th>Candidate</th>
+                <th>Job Position</th>
+                <th class="text-center">Match Score</th>
+                <th class="text-center">Status</th>
+                <th>Applied</th>
+              </tr>
+            </thead>
+            <tbody id="applicationsTableBody"></tbody>
+          </table>
+          <div id="tableEmpty" class="table-empty" style="display:none;">
+            <p>📭 No applications yet. Post a job to start receiving candidates!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div style="margin-top:1.2rem;">
+        <p style="font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.9px;margin-bottom:0.85rem;">Quick Actions</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+
+          <a href="job-posting.html" class="qa-card">
+            <div class="qa-icon" style="background:rgba(74,158,255,0.1);">➕</div>
+            <div class="qa-text">
+              <div class="qa-title">Post New Job</div>
+              <div class="qa-sub">Create and publish vacancies</div>
+            </div>
+            <span class="qa-arrow">›</span>
+          </a>
+
+          <a href="manage-jobs.html" class="qa-card">
+            <div class="qa-icon" style="background:rgba(16,185,129,0.1);">📁</div>
+            <div class="qa-text">
+              <div class="qa-title">Manage My Jobs</div>
+              <div class="qa-sub">Edit, close or view postings</div>
+            </div>
+            <span class="qa-arrow">›</span>
+          </a>
+
+          <a href="candidate-ranking.html" class="qa-card">
+            <div class="qa-icon" style="background:rgba(139,92,246,0.1);">🔍</div>
+            <div class="qa-text">
+              <div class="qa-title">View Candidates</div>
+              <div class="qa-sub">AI-ranked with match scores</div>
+            </div>
+            <span class="qa-arrow">›</span>
+          </a>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="../config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    window.auth.requireAuth();
+    if (!window.auth.hasRole('HR')) {
+      alert('Access denied. This page is for HR users only.');
+      window.location.href = '../index.html';
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="dashboard-new.js"></script>
+</body>
+</html>

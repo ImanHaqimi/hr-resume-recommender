@@ -21,7 +21,7 @@ async function loadApplications() {
     applicationsGrid.style.display = 'none';
     emptyState.style.display = 'none';
 
-    const response = await window.auth.authenticatedFetch(`${CONFIG.API_BASE_URL}/candidates/applications`);
+    const response = await window.auth.authenticatedFetch(`${CONFIG.API_BASE_URL}/api/candidates/applications`);
     const data = await response.json();
 
     if (!response.ok) {
@@ -67,61 +67,145 @@ function renderApplications(applications) {
 function createApplicationCard(app) {
   const job = app.jobId;
   const appliedDate = new Date(app.appliedDate).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
+    year: 'numeric', month: 'short', day: 'numeric'
   });
 
-  const matchScoreColor = getScoreColor(app.matchScore);
-  const matchLevelText = getMatchLevel(app.matchScore);
+  const score      = app.matchScore || 0;
+  const scoreColor = getScoreColor(score);
+  const matchLevel = getMatchLevel(score);
+  const matchEmoji = score >= 80 ? '🎯' : score >= 60 ? '✅' : score >= 40 ? '⚠️' : '❌';
+
+  const skills  = app.rankingDetails?.skillsScore     ?? null;
+  const exp     = app.rankingDetails?.experienceScore ?? null;
+  const edu     = app.rankingDetails?.educationScore  ?? null;
+
+  // Circular SVG ring helper
+  const ring = (pct, color) => {
+    const r = 28, circ = 2 * Math.PI * r;
+    const dash = (pct / 100) * circ;
+    return `<svg width="72" height="72" viewBox="0 0 72 72">
+      <circle cx="36" cy="36" r="${r}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
+      <circle cx="36" cy="36" r="${r}" fill="none" stroke="${color}" stroke-width="6"
+        stroke-dasharray="${dash} ${circ}" stroke-dashoffset="${circ / 4}"
+        stroke-linecap="round" transform="rotate(-90 36 36)" style="transition:stroke-dasharray 0.6s ease"/>
+      <text x="36" y="36" text-anchor="middle" dominant-baseline="central"
+        font-size="12" font-weight="700" fill="${color}">${pct}%</text>
+    </svg>`;
+  };
+
+  // Progress bar helper
+  const bar = (label, pct, color) => pct !== null ? `
+    <div style="margin-bottom:0.5rem;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:0.25rem;">
+        <span style="font-size:0.78rem;color:rgba(255,255,255,0.5);">${label}</span>
+        <span style="font-size:0.78rem;font-weight:600;color:${color};">${pct}%</span>
+      </div>
+      <div style="height:5px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;">
+        <div style="height:100%;width:${pct}%;background:${color};border-radius:3px;transition:width 0.6s ease;"></div>
+      </div>
+    </div>` : '';
+
+  // Status config
+  const statusConfig = {
+    SHORTLISTED: { bg:'rgba(74,222,128,0.15)', color:'#4ade80', border:'rgba(74,222,128,0.35)', icon:'✓' },
+    PENDING:     { bg:'rgba(250,204,21,0.15)',  color:'#facc15', border:'rgba(250,204,21,0.35)', icon:'⏳' },
+    REVIEWED:    { bg:'rgba(74,158,255,0.15)',  color:'#4a9eff', border:'rgba(74,158,255,0.35)', icon:'👁' },
+    REJECTED:    { bg:'rgba(248,113,113,0.15)', color:'#f87171', border:'rgba(248,113,113,0.35)', icon:'✕' }
+  };
+  const s = statusConfig[app.status] || statusConfig.PENDING;
+
+  const skillColor = skills >= 70 ? '#4ade80' : skills >= 40 ? '#facc15' : '#f87171';
+  const expColor   = exp   >= 70 ? '#4ade80' : exp   >= 40 ? '#facc15' : '#f87171';
+  const eduColor   = edu   >= 70 ? '#4ade80' : edu   >= 40 ? '#facc15' : '#f87171';
 
   return `
-    <div class="application-card">
-      <div class="app-header">
-        <div>
-          <h3 class="app-title">${job?.title || 'Job Title Not Available'}</h3>
-          <div class="app-meta">
-            Applied on ${appliedDate}
+    <div class="application-card" style="
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      display: flex; flex-direction: column; gap: 1rem;
+    " onmouseover="this.style.borderColor='rgba(74,158,255,0.35)';this.style.background='rgba(255,255,255,0.08)';this.style.transform='translateY(-3px)'"
+       onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)'">
+
+      <!-- Header: Title + Status Badge -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.75rem;">
+        <div style="flex:1;min-width:0;">
+          <h3 style="font-size:1.1rem;font-weight:700;color:#fff;margin:0 0 0.35rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+            💼 ${job?.title || 'Job Title Not Available'}
+          </h3>
+          <div style="font-size:0.82rem;color:rgba(255,255,255,0.5);display:flex;gap:1rem;flex-wrap:wrap;">
+            <span>🏢 ${job?.company || 'Company'}</span>
+            ${job?.location ? `<span>📍 ${job.location}</span>` : ''}
+            <span>📅 Applied ${appliedDate}</span>
           </div>
         </div>
-        <span class="status-badge status-${app.status}">${app.status}</span>
+        <span style="
+          flex-shrink:0;
+          padding:0.3rem 0.85rem;
+          border-radius:20px;
+          font-size:0.75rem;
+          font-weight:700;
+          letter-spacing:0.5px;
+          background:${s.bg};
+          color:${s.color};
+          border:1px solid ${s.border};
+          white-space:nowrap;
+        ">${s.icon} ${app.status}</span>
       </div>
 
-      ${app.matchScore > 0 ? `
-        <div class="score-section">
-          <div class="score-label">AI Match Score</div>
-          <div class="score-value" style="color: ${matchScoreColor}">
-            ${app.matchScore}%
-            <span style="font-size: 0.6em; color: rgba(255,255,255,0.6);">${matchLevelText}</span>
+      <!-- Score Section -->
+      ${score > 0 ? `
+        <div style="
+          background:rgba(255,255,255,0.04);
+          border:1px solid rgba(255,255,255,0.08);
+          border-radius:12px;
+          padding:1rem;
+          display:flex;
+          gap:1rem;
+          align-items:center;
+        ">
+          <!-- Circular ring -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.3rem;flex-shrink:0;">
+            ${ring(score, scoreColor)}
+            <span style="font-size:0.7rem;font-weight:600;color:${scoreColor};">${matchEmoji} ${matchLevel}</span>
           </div>
-          
-          ${app.rankingDetails ? `
-            <div class="score-breakdown">
-              <div class="score-item">
-                <div class="score-item-label">Skills</div>
-                <div class="score-item-value">${app.rankingDetails.skillsScore || 0}%</div>
-              </div>
-              <div class="score-item">
-                <div class="score-item-label">Experience</div>
-                <div class="score-item-value">${app.rankingDetails.experienceScore || 0}%</div>
-              </div>
-              <div class="score-item">
-                <div class="score-item-label">Education</div>
-                <div class="score-item-value">${app.rankingDetails.educationScore || 0}%</div>
-              </div>
-            </div>
-          ` : ''}
-        </div>
-      ` : '<div style="padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px; text-align: center; color: rgba(255,255,255,0.6); font-size: 0.9rem;">AI scoring in progress...</div>'}
 
-      <div class="app-actions">
-        <button onclick="viewJobDetails('${job?._id}')" class="btn btn-secondary btn-small">
-          View Job
+          <!-- Progress bars -->
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:0.75rem;color:rgba(255,255,255,0.45);margin-bottom:0.6rem;text-transform:uppercase;letter-spacing:0.5px;">Score Breakdown</div>
+            ${bar('Skills',     skills, skillColor)}
+            ${bar('Experience', exp,    expColor)}
+            ${bar('Education',  edu,    eduColor)}
+          </div>
+        </div>
+      ` : `
+        <div style="padding:1rem;background:rgba(255,255,255,0.04);border-radius:10px;text-align:center;color:rgba(255,255,255,0.5);font-size:0.88rem;">
+          ⏳ AI scoring in progress...
+        </div>
+      `}
+
+      <!-- Action Buttons -->
+      <div style="display:flex;gap:0.6rem;margin-top:auto;">
+        <button onclick="viewJobDetails('${job?._id}')" style="
+          flex:1;padding:0.6rem;border-radius:9px;font-size:0.85rem;font-weight:600;cursor:pointer;
+          background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.85);
+          transition:all 0.2s ease;
+        " onmouseover="this.style.background='rgba(255,255,255,0.13)'" onmouseout="this.style.background='rgba(255,255,255,0.07)'">
+          👁 View Job
         </button>
         ${app.status === 'SHORTLISTED' ? `
-          <button class="btn btn-primary btn-small" style="background: linear-gradient(135deg, #4CAF50, #45a049);">
-            🎉 Shortlisted!
-          </button>
+          <button style="
+            flex:1;padding:0.6rem;border-radius:9px;font-size:0.85rem;font-weight:700;cursor:default;
+            background:rgba(74,222,128,0.18);border:1.5px solid rgba(74,222,128,0.4);color:#4ade80;
+          ">🎉 Shortlisted!</button>
+        ` : ''}
+        ${app.status === 'REJECTED' ? `
+          <button style="
+            flex:1;padding:0.6rem;border-radius:9px;font-size:0.85rem;font-weight:600;cursor:default;
+            background:rgba(248,113,113,0.1);border:1.5px solid rgba(248,113,113,0.3);color:#f87171;
+          ">✕ Not Selected</button>
         ` : ''}
       </div>
     </div>
@@ -130,10 +214,10 @@ function createApplicationCard(app) {
 
 // Get score color based on match percentage
 function getScoreColor(score) {
-  if (score >= 80) return '#4CAF50'; // Green
+  if (score >= 80) return '#4ade80'; // Green
   if (score >= 60) return '#4a9eff'; // Blue
-  if (score >= 40) return '#ffc107'; // Yellow
-  return '#f44336'; // Red
+  if (score >= 40) return '#facc15'; // Yellow
+  return '#f87171';                  // Red
 }
 
 // Get match level text
@@ -143,6 +227,8 @@ function getMatchLevel(score) {
   if (score >= 40) return 'Fair Match';
   return 'Poor Match';
 }
+
+
 
 // Initialize filters
 function initializeFilters() {

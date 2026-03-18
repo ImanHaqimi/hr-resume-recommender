@@ -1,7 +1,7 @@
 // Frontend Configuration
 const CONFIG = {
   // API Configuration
-  API_BASE_URL: 'http://localhost:5000/api', // Backend API server
+  API_BASE_URL: 'http://localhost:5000', // Backend API server (without /api suffix)
   
   // Application Settings
   APP_NAME: 'AI Resume Matcher',

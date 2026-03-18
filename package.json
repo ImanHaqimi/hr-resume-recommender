@@ -1,0 +1,24 @@
+{
+  "name": "ai-resume-matcher",
+  "version": "1.0.0",
+  "description": "AI-Based HR Resume Recommender System - Frontend",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server . -p 8080 -o",
+    "dev": "npx http-server . -p 8080 -o",
+    "build": "echo 'Frontend build complete - ready for deployment'"
+  },
+  "keywords": [
+    "ai",
+    "resume",
+    "recruitment",
+    "hr",
+    "candidate-matching"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
+

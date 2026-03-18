@@ -138,7 +138,7 @@ function initCandidateRegister() {
     }
     
     try {
-      const response = await fetch(`${CONFIG.API_BASE_URL}/auth/register`, {
+      const response = await fetch(`${CONFIG.API_BASE_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -183,7 +183,7 @@ function initCandidateLogin() {
     const password = document.getElementById('password').value;
     
     try {
-      const response = await fetch(`${CONFIG.API_BASE_URL}/auth/login`, {
+      const response = await fetch(`${CONFIG.API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

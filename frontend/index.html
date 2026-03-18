@@ -3,149 +3,612 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Resume Matcher</title>
+  <title>AI Resume Matcher — Smart Recruitment Platform</title>
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="stylesheet" href="css/style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <meta name="description" content="AI-Based HR Resume Recommender System - Streamline your recruitment process with AI-powered candidate matching">
-  <meta name="keywords" content="AI, recruitment, resume matching, HR, candidate ranking">
-</head>
-<body data-page="landing">
+  <meta name="description" content="AI-powered resume screening and candidate ranking system. Streamline your recruitment process with intelligent matching.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-  <!-- Navigation Bar -->
+    :root {
+      --navy:    #070d1f;
+      --navy2:   #0d1b3e;
+      --blue:    #4a9eff;
+      --blue2:   #0066ff;
+      --teal:    #00d4b0;
+      --purple:  #8b5cf6;
+      --text:    rgba(255,255,255,0.88);
+      --muted:   rgba(255,255,255,0.45);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--navy);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ── Particles canvas ── */
+    #particles {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+    }
+
+    /* ── Navbar ── */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 1rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(7,13,31,0.7);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      transition: background 0.3s;
+    }
+
+    .nav-brand {
+      display: flex; align-items: center; gap: 0.7rem;
+      text-decoration: none;
+    }
+    .nav-logo { height: 36px; width: 36px; object-fit: contain; }
+    .nav-brand-name {
+      font-size: 1.15rem; font-weight: 700;
+      background: linear-gradient(135deg, #4a9eff, #00d4b0);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      display: flex; align-items: center; gap: 2rem; list-style: none;
+    }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #fff; }
+
+    .nav-ctas { display: flex; gap: 0.75rem; }
+    .btn-nav-outline {
+      padding: 0.45rem 1.1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600;
+      border: 1.5px solid rgba(74,158,255,0.5); color: #4a9eff;
+      text-decoration: none; transition: all 0.2s; background: transparent;
+    }
+    .btn-nav-outline:hover {
+      background: rgba(74,158,255,0.1); border-color: #4a9eff;
+    }
+    .btn-nav-primary {
+      padding: 0.45rem 1.1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600;
+      background: linear-gradient(135deg, #4a9eff, #0066ff);
+      color: #fff; text-decoration: none; transition: opacity 0.2s; border: none;
+    }
+    .btn-nav-primary:hover { opacity: 0.85; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 7rem 2rem 5rem;
+      overflow: hidden;
+    }
+
+    /* Glowing blobs behind hero */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 10%; left: 50%; transform: translateX(-50%);
+      width: 900px; height: 500px;
+      background: radial-gradient(ellipse at center,
+        rgba(74,158,255,0.12) 0%,
+        rgba(139,92,246,0.08) 40%,
+        transparent 70%
+      );
+      pointer-events: none;
+    }
+
+    .hero-inner { position: relative; max-width: 820px; }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(74,158,255,0.08); border: 1px solid rgba(74,158,255,0.2);
+      border-radius: 40px; padding: 0.4rem 1rem;
+      font-size: 0.8rem; font-weight: 600; color: #4a9eff;
+      margin-bottom: 1.8rem;
+      animation: fadeInDown 0.7s ease both;
+    }
+    .hero-badge .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #4a9eff;
+      animation: pulse 2s infinite;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-weight: 900; line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+      animation: fadeInUp 0.8s ease 0.1s both;
+    }
+
+    .hero h1 .grad {
+      background: linear-gradient(135deg, #4a9eff 0%, #00d4b0 50%, #8b5cf6 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.15rem; color: var(--muted); max-width: 520px;
+      margin: 0 auto 2.5rem;
+      animation: fadeInUp 0.8s ease 0.2s both;
+    }
+
+    .hero-buttons {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+      animation: fadeInUp 0.8s ease 0.3s both;
+    }
+
+    .btn-hero-primary {
+      padding: 0.9rem 2rem; border-radius: 12px; font-size: 1rem; font-weight: 700;
+      background: linear-gradient(135deg, #4a9eff, #0066ff);
+      color: #fff; text-decoration: none;
+      box-shadow: 0 8px 30px rgba(74,158,255,0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .btn-hero-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(74,158,255,0.5);
+    }
+
+    .btn-hero-secondary {
+      padding: 0.9rem 2rem; border-radius: 12px; font-size: 1rem; font-weight: 700;
+      background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15);
+      color: #fff; text-decoration: none;
+      transition: transform 0.2s, background 0.2s;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .btn-hero-secondary:hover {
+      transform: translateY(-2px); background: rgba(255,255,255,0.1);
+    }
+
+    /* Scroll hint */
+    .scroll-hint {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+      color: var(--muted); font-size: 0.72rem; letter-spacing: 0.8px; text-transform: uppercase;
+      animation: bounce 2s infinite;
+    }
+    .scroll-hint .arrow { width: 20px; height: 20px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      position: relative; z-index: 1;
+      background: rgba(255,255,255,0.03);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 1.8rem 2rem;
+    }
+    .stats-bar-inner {
+      max-width: 900px; margin: 0 auto;
+      display: flex; justify-content: space-around; flex-wrap: wrap; gap: 1rem;
+    }
+    .stat-pill { text-align: center; }
+    .stat-pill .num {
+      font-size: 2rem; font-weight: 800;
+      background: linear-gradient(135deg, #4a9eff, #00d4b0);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .stat-pill .lbl { font-size: 0.8rem; color: var(--muted); margin-top: 0.1rem; }
+
+    /* ── SECTIONS common ── */
+    section { position: relative; z-index: 1; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    .section-pad { padding: 6rem 0; }
+
+    .section-label {
+      display: inline-block;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+      color: #4a9eff; margin-bottom: 0.75rem;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800;
+      letter-spacing: -0.01em; color: #fff; margin-bottom: 1rem;
+    }
+    .section-sub { font-size: 1.05rem; color: var(--muted); max-width: 520px; }
+
+    /* ── FEATURES ── */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;
+      margin-top: 3rem;
+    }
+    @media (max-width: 760px) { .features-grid { grid-template-columns: 1fr; } }
+
+    .feat-card {
+      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px; padding: 1.8rem;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+    .feat-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(74,158,255,0.3);
+      box-shadow: 0 12px 40px rgba(74,158,255,0.1);
+    }
+    .feat-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; margin-bottom: 1.1rem;
+    }
+    .feat-card h3 { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
+    .feat-card p  { font-size: 0.87rem; color: var(--muted); line-height: 1.5; }
+
+    /* ── HOW IT WORKS ── */
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 0; margin-top: 3rem;
+      position: relative;
+    }
+    /* connecting line */
+    .steps-grid::before {
+      content: '';
+      position: absolute; top: 30px; left: 12.5%; right: 12.5%;
+      height: 2px;
+      background: linear-gradient(90deg, #4a9eff, #00d4b0, #8b5cf6);
+      z-index: 0;
+    }
+    @media (max-width: 760px) {
+      .steps-grid { grid-template-columns: 1fr 1fr; }
+      .steps-grid::before { display: none; }
+    }
+
+    .step-item {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      padding: 0 1rem; position: relative; z-index: 1;
+    }
+    .step-num {
+      width: 60px; height: 60px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; font-weight: 800; color: #fff;
+      margin-bottom: 1.2rem;
+      background: linear-gradient(135deg, #4a9eff, #0066ff);
+      box-shadow: 0 6px 20px rgba(74,158,255,0.4);
+    }
+    .step-item h3 { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 0.4rem; }
+    .step-item p  { font-size: 0.82rem; color: var(--muted); }
+
+    /* ── PORTAL CARDS ── */
+    .portal-section { padding: 5rem 0; }
+    .portal-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+      margin-top: 3rem;
+    }
+    @media (max-width: 640px) { .portal-grid { grid-template-columns: 1fr; } }
+
+    .portal-card {
+      border-radius: 20px; padding: 2.5rem 2rem;
+      text-decoration: none;
+      display: flex; flex-direction: column; align-items: flex-start;
+      transition: transform 0.25s, box-shadow 0.25s;
+      position: relative; overflow: hidden;
+    }
+    .portal-card:hover { transform: translateY(-4px); }
+
+    .portal-card-hr {
+      background: linear-gradient(135deg, rgba(74,158,255,0.15), rgba(74,158,255,0.04));
+      border: 1px solid rgba(74,158,255,0.3);
+    }
+    .portal-card-hr:hover { box-shadow: 0 20px 60px rgba(74,158,255,0.2); }
+
+    .portal-card-candidate {
+      background: linear-gradient(135deg, rgba(0,212,176,0.15), rgba(0,212,176,0.04));
+      border: 1px solid rgba(0,212,176,0.3);
+    }
+    .portal-card-candidate:hover { box-shadow: 0 20px 60px rgba(0,212,176,0.2); }
+
+    .portal-emoji { font-size: 2.8rem; margin-bottom: 1.2rem; }
+    .portal-card h3 { font-size: 1.4rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem; }
+    .portal-card p  { font-size: 0.9rem; color: var(--muted); margin-bottom: 1.5rem; flex: 1; }
+
+    .portal-cta {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.9rem; font-weight: 700;
+      padding: 0.6rem 1.3rem; border-radius: 10px;
+      transition: gap 0.2s;
+    }
+    .portal-card:hover .portal-cta { gap: 0.75rem; }
+
+    .portal-cta-hr { background: rgba(74,158,255,0.15); color: #4a9eff; }
+    .portal-cta-candidate { background: rgba(0,212,176,0.15); color: #00d4b0; }
+
+    /* corner decoration */
+    .portal-card::after {
+      content: '';
+      position: absolute; bottom: -20px; right: -20px;
+      width: 120px; height: 120px; border-radius: 50%;
+      opacity: 0.06;
+    }
+    .portal-card-hr::after { background: #4a9eff; }
+    .portal-card-candidate::after { background: #00d4b0; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 2rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      position: relative; z-index: 1;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.8); }
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* Reveal on scroll */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+  <!-- Floating particles -->
+  <canvas id="particles"></canvas>
+
+  <!-- ── NAVBAR ── -->
   <nav class="navbar">
-    <div class="container navbar-container">
-      <div class="nav-brand">
-        <a href="#home" class="gradient-text-link"><h2 class="gradient-text">AI Resume Matcher</h2></a>
-      </div>
-      <ul class="nav-menu">
-        <li><a href="#home">Home</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#features">Features</a></li>
-        <li><a href="hr/hr-login.html" class="btn btn-small btn-outline">HR Portal</a></li>
-        <li><a href="candidate/candidate-login.html" class="btn btn-small btn-primary">Candidate Portal</a></li>
-      </ul>
+    <a href="#home" class="nav-brand">
+      <img src="images/logo.png" alt="Logo" class="nav-logo">
+      <span class="nav-brand-name">AI Resume Matcher</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how-it-works">How it works</a></li>
+      <li><a href="#portal">Get Started</a></li>
+    </ul>
+    <div class="nav-ctas">
+      <a href="hr/hr-login.html" class="btn-nav-outline">HR Portal</a>
+      <a href="candidate/candidate-login.html" class="btn-nav-primary">Candidate Portal</a>
     </div>
   </nav>
 
-  <!-- Hero Section -->
-  <section id="home" class="hero reveal">
-    <div class="container">
-      <div class="hero-content">
-        <h1>Smart Recruitment Made Simple</h1>
-        <p class="lead">AI-powered resume screening and candidate ranking system for modern HR departments.</p>
-        <div class="hero-buttons">
-          <a href="hr/hr-login.html" class="btn btn-primary">Login as HR</a>
-          <a href="candidate/candidate-login.html" class="btn">Login as Candidate</a>
-        </div>
+  <!-- ── HERO ── -->
+  <section id="home" class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        AI-Powered Recruitment Platform
       </div>
+
+      <h1>
+        Hire Smarter with<br>
+        <span class="grad">AI-Driven Matching</span>
+      </h1>
+
+      <p>
+        Automatically screen, rank, and shortlist candidates using advanced NLP and machine learning — so you can focus on people, not paperwork.
+      </p>
+
+      <div class="hero-buttons">
+        <a href="hr/hr-login.html" class="btn-hero-primary">
+          🏢 HR Portal &nbsp;→
+        </a>
+        <a href="candidate/candidate-login.html" class="btn-hero-secondary">
+          👤 Candidate Portal
+        </a>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="arrow"></div>
     </div>
   </section>
 
-  <!-- About Section -->
-  <section id="about" class="about reveal">
-    <div class="container">
-      <h2 class="section-title">About the System</h2>
-      <div class="about-content">
-        <div class="about-text card reveal">
-          <h3>Revolutionizing Recruitment with AI</h3>
-          <p>Our AI-Based HR Resume Recommender System streamlines the hiring process by automatically analyzing, ranking, and filtering candidate resumes based on job requirements. Using advanced NLP and Machine Learning, we help HR departments save time and make better hiring decisions.</p>
-          <p>The system intelligently matches candidates' education levels and skills with job descriptions, ensuring only the most qualified applicants reach your desk.</p>
-        </div>
-        <div class="about-stats reveal">
-          <div class="stat-card">
-            <h3>75%</h3>
-            <p>Time Saved</p>
-          </div>
-          <div class="stat-card">
-            <h3>95%</h3>
-            <p>Accuracy Rate</p>
-          </div>
-          <div class="stat-card">
-            <h3>100+</h3>
-            <p>Resumes/Hour</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Features Section -->
-<section id="features" class="features reveal">
-  <div class="container">
-    <h2 class="section-title">Key Features</h2>
-    <div class="features-grid">
-      <div class="feature-card reveal">
-        <div class="feature-icon">🤖</div>
-        <h3>AI-Powered Ranking</h3>
-        <p>Advanced algorithms analyze and rank candidates based on skills and qualifications</p>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon">⚡</div>
-        <h3>Automated Filtering</h3>
-        <p>Automatically filter out unqualified candidates to save review time</p>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon">📊</div>
-        <h3>Smart Dashboard</h3>
-        <p>Intuitive interface displaying ranked candidates and match percentages</p>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon">🎯</div>
-        <h3>Skill Matching</h3>
-        <p>Semantic understanding of skills beyond simple keyword matching</p>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon">📝</div>
-        <h3>Easy Job Posting</h3>
-        <p>HR can quickly post job vacancies with detailed requirements</p>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon">👥</div>
-        <h3>Candidate Portal</h3>
-        <p>Candidates can browse jobs and submit applications seamlessly</p>
-      </div>
+  <!-- ── STATS BAR ── -->
+  <div class="stats-bar">
+    <div class="stats-bar-inner">
+      <div class="stat-pill"><div class="num">75%</div><div class="lbl">Time Saved in Screening</div></div>
+      <div class="stat-pill"><div class="num">95%</div><div class="lbl">Match Accuracy Rate</div></div>
+      <div class="stat-pill"><div class="num">100+</div><div class="lbl">Resumes Processed/Hour</div></div>
+      <div class="stat-pill"><div class="num">3</div><div class="lbl">AI Scoring Dimensions</div></div>
     </div>
   </div>
-</section>
 
-
-  <!-- How It Works Section -->
-  <section class="how-it-works reveal">
+  <!-- ── FEATURES ── -->
+  <section id="features" class="section-pad">
     <div class="container">
-      <h2 class="section-title">How It Works</h2>
-      <div class="steps">
-        <div class="step reveal">
-          <div class="step-number">1</div>
-          <h3>HR Posts Job</h3>
-          <p>Create detailed job postings with required skills and qualifications</p>
+      <div class="reveal">
+        <span class="section-label">Why Choose Us</span>
+        <h2 class="section-title">Everything You Need to<br>Hire the Right Person</h2>
+        <p class="section-sub">Powered by NLP and machine learning to give every applicant a fair, objective score.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feat-card reveal">
+          <div class="feat-icon" style="background:rgba(74,158,255,0.1);">🤖</div>
+          <h3>AI-Powered Ranking</h3>
+          <p>Advanced NLP algorithms score candidates across skills, education, and experience — objectively and instantly.</p>
         </div>
-        <div class="step reveal">
-          <div class="step-number">2</div>
-          <h3>Candidates Apply</h3>
-          <p>Job seekers browse openings and upload their resumes</p>
+        <div class="feat-card reveal">
+          <div class="feat-icon" style="background:rgba(0,212,176,0.1);">⚡</div>
+          <h3>Automated Filtering</h3>
+          <p>Set a match threshold and let the system surface only your most qualified applicants automatically.</p>
         </div>
-        <div class="step reveal">
-          <div class="step-number">3</div>
-          <h3>AI Analysis</h3>
-          <p>System analyzes resumes using NLP and machine learning</p>
+        <div class="feat-card reveal">
+          <div class="feat-icon" style="background:rgba(139,92,246,0.1);">📊</div>
+          <h3>Smart Dashboard</h3>
+          <p>Visual analytics showing application trends, status breakdowns, and ranked candidate lists in real time.</p>
         </div>
-        <div class="step reveal">
-          <div class="step-number">4</div>
-          <h3>View Rankings</h3>
-          <p>HR reviews ranked candidates and makes informed decisions</p>
+        <div class="feat-card reveal">
+          <div class="feat-icon" style="background:rgba(249,168,37,0.1);">🎯</div>
+          <h3>Semantic Skill Matching</h3>
+          <p>Goes beyond keywords — understands skill relationships so "React" also counts towards "Frontend Development".</p>
+        </div>
+        <div class="feat-card reveal">
+          <div class="feat-icon" style="background:rgba(248,113,113,0.1);">📝</div>
+          <h3>Easy Job Posting</h3>
+          <p>Create detailed vacancies with custom skill weights, salary ranges, and education requirements in minutes.</p>
+        </div>
+        <div class="feat-card reveal">
+          <div class="feat-icon" style="background:rgba(16,185,129,0.1);">👥</div>
+          <h3>Candidate Portal</h3>
+          <p>Candidates browse live jobs, upload their resume once, and track their application status in real time.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="reveal">
+  <!-- ── HOW IT WORKS ── -->
+  <section id="how-it-works" class="section-pad" style="background:rgba(255,255,255,0.015);">
     <div class="container">
-      <p>&copy; 2025 AI Resume Matcher. All Rights Reserved.</p>
+      <div class="reveal" style="text-align:center; margin-bottom:0.5rem;">
+        <span class="section-label">Simple Process</span>
+        <h2 class="section-title">From Job Post to<br>Top Candidate in 4 Steps</h2>
+      </div>
+
+      <div class="steps-grid reveal">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <h3>HR Posts Job</h3>
+          <p>Define skills, education, experience requirements and salary range</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:linear-gradient(135deg,#00d4b0,#0066ff);">2</div>
+          <h3>Candidates Apply</h3>
+          <p>Applicants upload resume and submit through the candidate portal</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:linear-gradient(135deg,#8b5cf6,#00d4b0);">3</div>
+          <h3>AI Analyses</h3>
+          <p>NLP engine scores each resume against job requirements instantly</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:linear-gradient(135deg,#f59e0b,#8b5cf6);">4</div>
+          <h3>View Rankings</h3>
+          <p>HR reviews the ranked shortlist and makes data-driven decisions</p>
+        </div>
+      </div>
     </div>
+  </section>
+
+  <!-- ── PORTAL SELECTION ── -->
+  <section id="portal" class="portal-section">
+    <div class="container">
+      <div class="reveal" style="text-align:center;">
+        <span class="section-label">Get Started</span>
+        <h2 class="section-title">Choose Your Portal</h2>
+        <p class="section-sub" style="margin:0 auto;">Access the platform as an HR manager or as a job-seeking candidate.</p>
+      </div>
+
+      <div class="portal-grid reveal">
+        <a href="hr/hr-login.html" class="portal-card portal-card-hr">
+          <div class="portal-emoji">🏢</div>
+          <h3>HR Manager Portal</h3>
+          <p>Post jobs, view AI-ranked candidates, manage applications, export CSV reports, and track your hiring pipeline.</p>
+          <span class="portal-cta portal-cta-hr">Login as HR &nbsp;→</span>
+        </a>
+        <a href="candidate/candidate-login.html" class="portal-card portal-card-candidate">
+          <div class="portal-emoji">👤</div>
+          <h3>Candidate Portal</h3>
+          <p>Browse open positions, upload your resume once, and get matched to jobs based on your skills and experience.</p>
+          <span class="portal-cta portal-cta-candidate">Login as Candidate &nbsp;→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <p>© 2025 AI Resume Matcher &nbsp;·&nbsp; Built for FYP — AI-Based HR Resume Recommender System</p>
   </footer>
 
-  <script src="js/main.js"></script>
+  <script>
+    /* ── Particles ── */
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let W, H, particles = [];
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+
+    function Particle() {
+      this.x  = Math.random() * W;
+      this.y  = Math.random() * H;
+      this.r  = Math.random() * 1.8 + 0.4;
+      this.dx = (Math.random() - 0.5) * 0.3;
+      this.dy = (Math.random() - 0.5) * 0.3;
+      this.alpha = Math.random() * 0.5 + 0.1;
+    }
+
+    function initParticles() {
+      particles = Array.from({ length: 90 }, () => new Particle());
+    }
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, W, H);
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(74,158,255,${p.alpha})`;
+        ctx.fill();
+
+        p.x += p.dx; p.y += p.dy;
+        if (p.x < 0 || p.x > W) p.dx *= -1;
+        if (p.y < 0 || p.y > H) p.dy *= -1;
+      });
+
+      // lines between nearby particles
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(74,158,255,${0.08 * (1 - dist / 120)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(drawParticles);
+    }
+
+    window.addEventListener('resize', () => { resize(); initParticles(); });
+    resize(); initParticles(); drawParticles();
+
+    /* ── Scroll reveal ── */
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => observer.observe(el));
+
+    /* ── Navbar scroll tint ── */
+    window.addEventListener('scroll', () => {
+      document.querySelector('.navbar').style.background =
+        window.scrollY > 60 ? 'rgba(7,13,31,0.95)' : 'rgba(7,13,31,0.7)';
+    });
+  </script>
 </body>
 </html>

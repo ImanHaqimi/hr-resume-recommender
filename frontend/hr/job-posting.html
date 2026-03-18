@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post Job - AI Resume Matcher</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="hr-style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <div class="nav-brand">
+        <span class="nav-brand-link">
+          <img src="../images/logo.png" alt="AI Resume Matcher Logo" class="nav-logo">
+          <h2 class="gradient-text">AI Resume Matcher</h2>
+        </span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="job-posting.html" class="active">Post Job</a></li>
+        <li><a href="manage-jobs.html">My Jobs</a></li>
+        <li><a href="candidate-ranking.html">Candidates</a></li>
+        <li><a href="../index.html" id="logoutBtn">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Job Posting Content -->
+  <div class="page-container">
+    <div class="container">
+      <div class="page-header">
+        <h1>Post New Job</h1>
+        <p>Create a detailed job posting to attract the best candidates</p>
+      </div>
+
+      <form class="job-form" id="jobPostingForm">
+        <div class="form-section">
+          <h3>Job Information</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="jobTitle">Job Title *</label>
+              <input type="text" id="jobTitle" name="jobTitle" placeholder="e.g., Software Engineer" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="department">Department *</label>
+              <select id="department" name="department" required>
+                <option value="">Select Department</option>
+                <option value="engineering">Engineering</option>
+                <option value="marketing">Marketing</option>
+                <option value="sales">Sales</option>
+                <option value="hr">Human Resources</option>
+                <option value="finance">Finance</option>
+                <option value="operations">Operations</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="location">Location *</label>
+              <input type="text" id="location" name="location" placeholder="e.g., Remote, Kuala Lumpur, Selangor" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="employmentType">Employment Type *</label>
+              <select id="employmentType" name="employmentType" required>
+                <option value="">Select Type</option>
+                <option value="FULL_TIME">Full-time</option>
+                <option value="PART_TIME">Part-time</option>
+                <option value="CONTRACT">Contract</option>
+                <option value="INTERNSHIP">Internship</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="jobDescription">Job Description *</label>
+            <textarea id="jobDescription" name="jobDescription" rows="6" placeholder="Describe the role, responsibilities, and what you're looking for..." required></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>Requirements & Weightage</h3>
+          
+          <div class="form-group">
+            <label for="education">Education Level *</label>
+            <select id="education" name="education" required>
+              <option value="">Select Education Level</option>
+              <option value="high-school">High School / SPM</option>
+              <option value="diploma">Diploma</option>
+              <option value="bachelor">Bachelor's Degree</option>
+              <option value="master">Master's Degree</option>
+              <option value="phd">PhD</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="experience">Years of Experience</label>
+            <select id="experience" name="experience">
+              <option value="0">Entry Level (0-1 years)</option>
+              <option value="2">Junior (2-3 years)</option>
+              <option value="4">Mid-level (4-6 years)</option>
+              <option value="7">Senior (7+ years)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="skills">Required Skills *</label>
+            <input type="text" id="skills" name="skills" placeholder="e.g., JavaScript, Python, React, SQL (comma separated)" required>
+            <small>Separate skills with commas</small>
+          </div>
+
+          <div class="form-group">
+            <label for="minimumMatchThreshold">Minimum match score to show as qualified (%)</label>
+            <input type="number" id="minimumMatchThreshold" name="minimumMatchThreshold" min="0" max="100" value="40" placeholder="40">
+            <small>Candidates below this score are filtered out so you only review qualified applicants. Default: 40%</small>
+          </div>
+
+          <div class="info-box">
+            <p><strong>Note:</strong> AI will automatically rank candidates based on education level and skills matching. Only candidates meeting the minimum match score above will appear by default in the candidate list.</p>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>Additional Information</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="salaryMin">Salary Range (Min) - RM *</label>
+              <input type="number" id="salaryMin" name="salaryMin" placeholder="e.g., 3000" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="salaryMax">Salary Range (Max) - RM *</label>
+              <input type="number" id="salaryMax" name="salaryMax" placeholder="e.g., 5000" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="benefits">Benefits *</label>
+            <textarea id="benefits" name="benefits" rows="3" placeholder="e.g., Medical insurance, EPF, SOCSO, Annual leave..." required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="allowances">Allowances</label>
+            <textarea id="allowances" name="allowances" rows="2" placeholder="e.g., Transport allowance, Meal allowance..."></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="expectedStartDate">Expected Start Date *</label>
+              <input type="date" id="expectedStartDate" name="expectedStartDate" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="applicationDeadline">Application Deadline</label>
+              <input type="date" id="applicationDeadline" name="applicationDeadline">
+            </div>
+          </div>
+
+
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" onclick="window.location.href='dashboard.html'">Cancel</button>
+          <button type="submit" class="btn btn-primary">Post Job</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    // Protect this page - require HR authentication
+    window.auth.requireAuth();
+    if (!window.auth.hasRole('HR')) {
+      alert('Access denied. This page is for HR users only.');
+      window.location.href = '../index.html';
+    }
+  </script>
+  <script src="hr-main.js"></script>
+</body>
+</html>
+

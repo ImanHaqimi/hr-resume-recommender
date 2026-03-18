@@ -52,8 +52,8 @@ function initResumeUpload() {
   // Remove file
   removeFile.addEventListener('click', function() {
     selectedFile = null;
-    uploadArea.style.display = 'flex';
-    uploadedFile.style.display = 'none';
+    uploadArea.style.display = '';
+    uploadedFile.classList.remove('show');
     submitButton.disabled = true;
     fileInput.value = '';
   });
@@ -82,7 +82,7 @@ function handleFile(file) {
   document.getElementById('fileName').textContent = file.name;
   document.getElementById('fileSize').textContent = formatFileSize(file.size);
   document.getElementById('uploadArea').style.display = 'none';
-  document.getElementById('uploadedFile').style.display = 'flex';
+  document.getElementById('uploadedFile').classList.add('show');
   document.getElementById('submitResume').disabled = false;
 }
 
@@ -117,11 +117,11 @@ async function uploadResume() {
       return;
     }
 
-    console.log('📤 Uploading resume to:', `${CONFIG.API_BASE_URL}/candidates/resume`);
+    console.log('📤 Uploading resume to:', `${CONFIG.API_BASE_URL}/api/candidates/resume`);
     console.log('📄 File:', selectedFile.name, selectedFile.size, 'bytes');
 
     // Upload to backend
-    const response = await fetch(`${CONFIG.API_BASE_URL}/candidates/resume`, {
+    const response = await fetch(`${CONFIG.API_BASE_URL}/api/candidates/resume`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`

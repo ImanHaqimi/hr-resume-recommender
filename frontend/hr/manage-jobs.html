@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Jobs - AI Resume Matcher</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="hr-style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── Page Layout ── */
+    .page-container { padding: 2rem 0; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+    .page-header h1 { font-size: 2rem; font-weight: 700; }
+    .page-header p  { color: rgba(255,255,255,0.6); margin-top: 0.3rem; }
+
+    /* ── Summary Bar ── */
+    .jobs-summary { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .summary-pill {
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 30px; padding: 0.45rem 1.1rem;
+      font-size: 0.85rem; color: rgba(255,255,255,0.75);
+    }
+    .summary-pill span { font-weight: 700; color: #4a9eff; }
+
+    /* ── Filter Bar ── */
+    .filter-bar {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; padding: 0.9rem 1.4rem;
+      display: flex; gap: 1rem; align-items: center; margin-bottom: 2rem; flex-wrap: wrap;
+    }
+    .filter-bar label { color: rgba(255,255,255,0.8); font-size: 0.9rem; font-weight: 500; }
+    .filter-bar select {
+      background: #1a1f3a; border: 1px solid rgba(255,255,255,0.2);
+      color: #fff; padding: 0.4rem 0.9rem; border-radius: 8px; font-size: 0.9rem; outline: none; cursor: pointer;
+    }
+    .filter-bar select option { background: #1a1f3a; }
+
+    /* ── Job Cards Grid ── */
+    .jobs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 900px) { .jobs-grid { grid-template-columns: 1fr; } }
+
+    .job-card {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px; padding: 1.5rem;
+      display: flex; flex-direction: column; gap: 1rem;
+      transition: all 0.3s ease;
+    }
+    .job-card:hover { background: rgba(255,255,255,0.08); border-color: rgba(74,158,255,0.35); transform: translateY(-2px); }
+    .job-card.closed-card { opacity: 0.65; }
+
+    /* Card Header */
+    .job-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; }
+    .job-title { font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
+    .job-meta  { font-size: 0.82rem; color: rgba(255,255,255,0.5); display: flex; gap: 0.8rem; flex-wrap: wrap; }
+    .status-badge { padding: 0.28rem 0.85rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.4px; flex-shrink: 0; }
+    .badge-ACTIVE  { background: rgba(74,222,128,0.18); color: #4ade80; border: 1px solid rgba(74,222,128,0.35); }
+    .badge-CLOSED  { background: rgba(248,113,113,0.15); color: #f87171; border: 1px solid rgba(248,113,113,0.3); }
+    .badge-DRAFT   { background: rgba(250,204,21,0.15);  color: #facc15; border: 1px solid rgba(250,204,21,0.3); }
+
+    /* Stats row */
+    .job-stats { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .stat-item { text-align: center; }
+    .stat-value { font-size: 1.5rem; font-weight: 700; color: #4a9eff; }
+    .stat-label { font-size: 0.75rem; color: rgba(255,255,255,0.45); margin-top: 0.1rem; }
+
+    /* Skills row */
+    .skills-list { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .skill-chip {
+      background: rgba(74,158,255,0.1); border: 1px solid rgba(74,158,255,0.25);
+      color: #93c5fd; font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 20px;
+    }
+    .skill-chip.more { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.5); border-color: rgba(255,255,255,0.15); }
+
+    /* Info row */
+    .job-info { display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.83rem; color: rgba(255,255,255,0.55); }
+
+    /* Action buttons */
+    .job-actions { display: flex; gap: 0.6rem; margin-top: auto; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.07); }
+    .btn-action {
+      flex: 1; padding: 0.55rem 0.5rem; border-radius: 9px; font-size: 0.83rem; font-weight: 600;
+      cursor: pointer; border: 1.5px solid; transition: all 0.2s ease; text-align: center;
+    }
+    .btn-edit      { background: rgba(74,158,255,0.12); border-color: #4a9eff; color: #4a9eff; }
+    .btn-edit:hover{ background: rgba(74,158,255,0.22); }
+    .btn-toggle-close   { background: rgba(248,113,113,0.1); border-color: #f87171; color: #f87171; }
+    .btn-toggle-close:hover { background: rgba(248,113,113,0.2); }
+    .btn-toggle-open    { background: rgba(74,222,128,0.1); border-color: #4ade80; color: #4ade80; }
+    .btn-toggle-open:hover  { background: rgba(74,222,128,0.2); }
+    .btn-delete    { background: rgba(248,113,113,0.08); border-color: rgba(248,113,113,0.4); color: #f87171; }
+    .btn-delete:hover { background: rgba(248,113,113,0.18); }
+    .btn-view-candidates { background: rgba(167,139,250,0.1); border-color: #a78bfa; color: #a78bfa; }
+    .btn-view-candidates:hover { background: rgba(167,139,250,0.2); }
+    .btn-export      { background: rgba(16,185,129,0.1); border-color: #10b981; color: #10b981; }
+    .btn-export:hover{ background: rgba(16,185,129,0.2); }
+
+    /* Empty / Loading states */
+    .state-box {
+      grid-column: 1/-1; text-align: center; padding: 4rem 2rem;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; color: rgba(255,255,255,0.5);
+    }
+    .state-box .state-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .state-box h3 { font-size: 1.2rem; color: rgba(255,255,255,0.75); margin-bottom: 0.5rem; }
+
+    /* ── Edit Modal ── */
+    .edit-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.75);
+    }
+    .edit-overlay.open { display: flex; }
+
+    .edit-box {
+      background: #1a1f3a;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 620px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      z-index: 9001;
+    }
+    .edit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .edit-header h2 { font-size: 1.3rem; font-weight: 700; color: #fff; }
+    .edit-close { background: none; border: none; color: rgba(255,255,255,0.5); font-size: 1.5rem; cursor: pointer; line-height: 1; }
+    .edit-close:hover { color: #fff; }
+
+    .edit-box .form-group { margin-bottom: 1.1rem; }
+    .edit-box .form-group label { display: block; color: rgba(255,255,255,0.75); font-size: 0.88rem; margin-bottom: 0.4rem; font-weight: 500; }
+    .edit-box .form-group input,
+    .edit-box .form-group select,
+    .edit-box .form-group textarea {
+      width: 100%; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.18);
+      color: #fff; padding: 0.6rem 0.9rem; border-radius: 9px; font-size: 0.9rem; outline: none;
+      font-family: inherit; transition: border-color 0.2s;
+    }
+    .edit-box .form-group input:focus,
+    .edit-box .form-group select:focus,
+    .edit-box .form-group textarea:focus { border-color: rgba(74,158,255,0.6); }
+    .edit-box .form-group select option { background: #1a1f3a; }
+    .edit-box .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .edit-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+    .btn-save {
+      flex: 1; padding: 0.7rem; border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+      background: linear-gradient(135deg, #4a9eff, #0066ff); border: none; color: #fff; transition: opacity 0.2s;
+    }
+    .btn-save:hover { opacity: 0.9; }
+    .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-cancel-edit {
+      flex: 1; padding: 0.7rem; border-radius: 10px; font-size: 0.95rem; font-weight: 600; cursor: pointer;
+      background: rgba(255,255,255,0.07); border: 1.5px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.8);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 9999;
+      padding: 0.85rem 1.5rem; border-radius: 12px; font-weight: 600; font-size: 0.9rem;
+      opacity: 0; transform: translateY(20px); transition: all 0.35s ease;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.success { background: rgba(74,222,128,0.2); border: 1px solid #4ade80; color: #4ade80; }
+    .toast.error   { background: rgba(248,113,113,0.2); border: 1px solid #f87171; color: #f87171; }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <div class="nav-brand">
+        <span class="nav-brand-link">
+          <img src="../images/logo.png" alt="AI Resume Matcher Logo" class="nav-logo">
+          <h2 class="gradient-text">AI Resume Matcher</h2>
+        </span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="job-posting.html">Post Job</a></li>
+        <li><a href="manage-jobs.html" class="active">My Jobs</a></li>
+        <li><a href="candidate-ranking.html">Candidates</a></li>
+        <li><a href="../index.html" id="logoutBtn">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="page-container">
+    <div class="container">
+      <div class="page-header">
+        <div>
+          <h1>My Job Postings</h1>
+          <p>View, edit, or delete the jobs you have posted</p>
+        </div>
+        <a href="job-posting.html" class="btn btn-primary">➕ Post New Job</a>
+      </div>
+
+      <!-- Summary Pills -->
+      <div class="jobs-summary" id="jobsSummary" style="display:none;">
+        <div class="summary-pill">Total: <span id="totalCount">0</span></div>
+        <div class="summary-pill">🟢 Active: <span id="activeCount">0</span></div>
+        <div class="summary-pill">🔴 Closed: <span id="closedCount">0</span></div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar" id="filterBar" style="display:none;">
+        <label>Filter by Status:</label>
+        <select id="statusFilter" onchange="applyFilter()">
+          <option value="ALL" style="background:#1a1f3a">All Jobs</option>
+          <option value="ACTIVE" style="background:#1a1f3a;color:#4ade80">Active</option>
+          <option value="CLOSED" style="background:#1a1f3a;color:#f87171">Closed</option>
+          <option value="DRAFT"  style="background:#1a1f3a;color:#facc15">Draft</option>
+        </select>
+      </div>
+
+      <!-- Jobs Grid -->
+      <div class="jobs-grid" id="jobsGrid">
+        <div class="state-box">
+          <div class="state-icon">⏳</div>
+          <h3>Loading your jobs...</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal (using unique class names to avoid hr-style.css conflicts) -->
+  <div class="edit-overlay" id="editModal">
+    <div class="edit-box">
+      <div class="edit-header">
+        <h2>✏️ Edit Job</h2>
+        <button class="edit-close" onclick="closeModal()">✕</button>
+      </div>
+      <input type="hidden" id="editJobId">
+
+      <div class="form-group">
+        <label>Job Title *</label>
+        <input type="text" id="editTitle" placeholder="e.g., Software Engineer" required>
+      </div>
+
+      <div class="edit-box form-row">
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" id="editLocation" placeholder="e.g., Kuala Lumpur">
+        </div>
+        <div class="form-group">
+          <label>Employment Type</label>
+          <select id="editEmploymentType">
+            <option value="FULL_TIME">Full-time</option>
+            <option value="PART_TIME">Part-time</option>
+            <option value="CONTRACT">Contract</option>
+            <option value="INTERNSHIP">Internship</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Job Description *</label>
+        <textarea id="editDescription" rows="4" placeholder="Describe the role..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Required Skills (comma separated)</label>
+        <input type="text" id="editSkills" placeholder="e.g., Python, JavaScript, React">
+      </div>
+
+      <div class="form-group">
+        <label>Education Level</label>
+        <select id="editEducation">
+          <option value="high-school">High School / SPM</option>
+          <option value="diploma">Diploma</option>
+          <option value="bachelor">Bachelor's Degree</option>
+          <option value="master">Master's Degree</option>
+          <option value="phd">PhD</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Experience Required (years)</label>
+        <select id="editExperience">
+          <option value="0">Entry Level (0-1 years)</option>
+          <option value="2">Junior (2-3 years)</option>
+          <option value="4">Mid-level (4-6 years)</option>
+          <option value="7">Senior (7+ years)</option>
+        </select>
+      </div>
+
+      <div class="edit-box form-row">
+        <div class="form-group">
+          <label>Salary Min (RM)</label>
+          <input type="number" id="editSalaryMin" placeholder="e.g., 3000">
+        </div>
+        <div class="form-group">
+          <label>Salary Max (RM)</label>
+          <input type="number" id="editSalaryMax" placeholder="e.g., 5000">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Status</label>
+        <select id="editStatus">
+          <option value="ACTIVE">Active</option>
+          <option value="CLOSED">Closed</option>
+          <option value="DRAFT">Draft</option>
+        </select>
+      </div>
+
+      <div class="edit-actions">
+        <button class="btn-cancel-edit" onclick="closeModal()">Cancel</button>
+        <button class="btn-save" onclick="saveJob()">💾 Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <script src="../config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    window.auth.requireAuth();
+    if (!window.auth.hasRole('HR')) {
+      alert('Access denied. This page is for HR users only.');
+      window.location.href = '../index.html';
+    }
+  </script>
+  <script src="manage-jobs.js"></script>
+</body>
+</html>
