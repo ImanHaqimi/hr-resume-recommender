@@ -241,8 +241,8 @@ python -m uvicorn main:app --reload --port 8000
 ### HR Account
 | Field | Value |
 |-------|-------|
-| Email | `hr.manager@demo.com` |
-| Password | `Demo@1234` |
+| Email | `hr@test.com` |
+| Password | `password123` |
 
 ### Candidate Accounts
 | Email | Password | Expected Match |
