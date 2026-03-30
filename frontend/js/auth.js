@@ -111,7 +111,7 @@ function requireAuth() {
   if (!isAuthenticated()) {
     // Save intended destination
     localStorage.setItem('redirect_after_login', window.location.pathname);
-    window.location.href = '/frontend/index.html';
+    window.location.href = '/index.html';
   }
 }
 
@@ -120,7 +120,7 @@ function requireAuth() {
  */
 function logout() {
   removeToken();
-  window.location.href = '/frontend/index.html';
+  window.location.href = '/index.html';
 }
 
 /**
@@ -146,7 +146,7 @@ async function authenticatedFetch(url, options = {}) {
     // Handle 401 Unauthorized - token expired or invalid
     if (response.status === 401) {
       removeToken();
-      window.location.href = '/frontend/index.html';
+      window.location.href = '/index.html';
       throw new Error('Session expired. Please login again.');
     }
     
